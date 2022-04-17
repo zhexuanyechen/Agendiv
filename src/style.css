@@ -1,0 +1,146 @@
+/*Index style*/
+:root {
+    --fondoApp: #FFF9EE;
+    --fondoSec: #FEFEAA;
+    --colorOscuro: #2c2c2c;
+    --colorLunes: #b8e4e9;
+    --colorMartes: #fde9ae;
+    --colorMier: #faced7;
+    --colorJueves: #e5f1bf;
+    --colorViernes: #dac8d7;
+    --colorSab: #ee8d8d;
+    --colorDom: #ee8d8d;
+    --tamLetra: 1.2rem;
+    --displayHoras: cell;
+}
+
+html,
+body {
+    min-height: 100%;
+    font-size: var(--tamLetra);
+    color: black;
+    width: 100%;
+}
+
+body {
+    background-color: var(--fondoApp);
+}
+
+/*Botones índice*/
+.btnIndex {
+    border: 3px solid var(--colorOscuro);
+    background-color: var(--fondoSec);
+    border-radius: 10px;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.35);
+    font-size: 1.3em;
+}
+
+.btnIndex:hover,
+.btnIndex:focus {
+    background-color: #ebeb68;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
+}
+
+.imgBtnIndex {
+    display: block;
+    width: 40%;
+    margin: 0.5rem auto 0.5rem auto;
+}
+
+.btnTitle {
+    font-size: 1.1em;
+    text-align: center;
+    font-weight: bolder;
+}
+
+/*Botones atrás-ajustes*/
+.ajustesBtn,
+.btnVolver {
+    border: none;
+    background-color: var(--fondoApp);
+}
+
+.ajustesBtn>img,
+.btnVolver>img {
+    filter: drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.35));
+}
+
+.ajustesBtn:hover>img,
+.btnVolver:hover>img,
+.ajustesBtn:focus>img,
+.btnVolver:focus>img {
+    filter: drop-shadow(10px 10px 4px rgba(0, 0, 0, 0.5));
+}
+
+/*Modal login-registro*/
+#modalAuth {
+    background-color: var(--fondoApp);
+    opacity: 1;
+    font-size: 1.2em;
+}
+
+.modal-content {
+    border: 3px solid var(--colorOscuro);
+    background-color: var(--fondoSec);
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-control {
+    border: 1px solid var(--colorOscuro);
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.enlaceaSignup {
+    cursor: pointer;
+    text-align: right;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.enlaceaSignup:hover {
+    color: #01468a;
+}
+
+form>.modal-footer {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#signup:disabled,
+#login:disabled {
+    background-color: #e7e7e7;
+    border-color: #545454;
+    color: black;
+}
+
+/*Botones aceptar-rechazar*/
+.btnVerde {
+    border: 2.5px solid #2a8156;
+    background-color: #d8f3e5;
+}
+
+.btnVerde:hover,
+.btnVerde:focus {
+    background-color: #81daac;
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+.btnRojo {
+    border: 2.5px solid #e60000;
+    background-color: #fcc1c1;
+}
+
+.btnRojo:hover,
+.btnRojo:focus {
+    background-color: #f89595;
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
+}

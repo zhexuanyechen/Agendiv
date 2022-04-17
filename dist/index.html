@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agendiv</title>
+    <link rel="shortcut icon" href="#" />
+</head>
+
+<body>
+    <div id="modalAuth" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="tituloModalAuth" class="modal-title"></h3>
+                </div>
+                <div id="contenidoModalAuth" class="modal-body">
+                    <form id="authForm">
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAdd" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="tituloModalAdd" class="modal-title"></h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div id="contenidoModalFun" class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="h-100 d-flex flex-column justify-content-between container-xl">
+        <div id="btnContainerTop" class="d-flex justify-content-between mt-3">
+            <div class="mt-2 mb-2">
+                <button type="button" class="volver btn btnVolver btnSecundarios"><img
+                        src="./pictogramas/back.png"></button>
+            </div>
+            <div class="dropdown">
+                <button type="button" id="foto" class="btn btnSecundarios dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false"><img src="./pictogramas/user.png"></button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><button class="dropdown-item"><img src="./pictogramas/user.png">Ver Perfil</button></li>
+                    <li><button class="dropdown-item"><img src="./pictogramas/camera.png">Cambiar foto</button></li>
+                    <li><button type="button" id="ajustes" class="btn dropdown-item"><img
+                                src="./pictogramas/gear.png">Ajustes</button></li>
+                </ul>
+            </div>
+            <div>
+                <button type="button" id="logout" class="btn  btnRojo mt-3" data-bs-dismiss="modal"><i
+                        class="fas fa-sign-out-alt"></i>Cerrar sesión</button>
+            </div>
+        </div>
+        <div id="btnContainerMid">
+            <div class=" d-flex mt-3 flex-grow-1 flex-column flex-sm-row justify-content-around">
+                <div class="m-3">
+                    <button type="button" id="btnHorario" class="btn btnIndex">
+                        <img src="./pictogramas/schedule.png" class="imgBtnIndex">
+                        <p class="btnTitle">Horario</p>
+                    </button>
+                </div>
+                <div class="m-3">
+                    <button type="button" id="btnCalendario" class="btn btnIndex">
+                        <img src="./pictogramas/calendar.png" class="imgBtnIndex">
+                        <p class="btnTitle">Calendario</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="horarioContainer">
+            <div class="d-flex flex-row mt-2 mb-4 align-items-center justify-content-center">
+                <button type="button" id="btnIzqD" class="btn btnCambiarDia"><i
+                        class="fas fa-chevron-left"></i></button>
+                <button type="button" id="diaH" class="btn btnVerde">Día</button>
+                <button type="button" id="semanaH" class="btn btnVerde">Semana</button>
+                <button type="button" id="btnDerD" class="btn btnCambiarDia"><i
+                        class="fas fa-chevron-right"></i></button>
+            </div>
+            <table id="tablaHorario" class="table tablaHorario"></table>
+            <table id="tablaHorarioDia" class="table tablaHorario"></table>
+        </div>
+
+        <div class="calendarContainer">
+            <div id="calendar"></div>
+        </div>
+
+        <div id="btnContainerBot" class="mt-2 mb-2">
+            <button type="button" class="volver btn btnVolver btnSecundarios"><img
+                    src="./pictogramas/back.png"></button>
+        </div>
+    </div>
+
+    <script src="bundle.js"></script>
+
+</body>
+
+</html>
