@@ -5,7 +5,11 @@ import {
 import {
     getFirestore,
     collection,
-    getDocs
+    getDocs,
+    setDoc,
+    doc,
+    getDoc,
+    onSnapshot
 } from 'firebase/firestore'
 
 import {
@@ -16,10 +20,13 @@ import {
     signOut,
 } from "firebase/auth";
 
-import * as bootstrap from 'bootstrap';
+import {
+    Modal
+} from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
 
+/*Inicializacion */
 const firebaseConfig = {
     apiKey: "AIzaSyAeFEDqLmHUdmHUXSbfpGfWwWtnGsBHuN4",
     authDomain: "agendiv-atenpace-e8772.firebaseapp.com",
@@ -31,8 +38,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
+const db = getFirestore(app);
+
 const modalAuth = new bootstrap.Modal(document.getElementById("modalAuth"), {
     backdrop: "static",
     keyboard: false,
@@ -40,15 +48,48 @@ const modalAuth = new bootstrap.Modal(document.getElementById("modalAuth"), {
 });
 const tituloModalAuth = document.getElementById("tituloModalAuth");
 const authForm = document.getElementById("authForm");
-let user;
+let userId = "";
+let alumnoRef;
+let alumData;
+let arrayAsignaturas = [];
 
-const db = getFirestore(app);
-const alumnosRef = collection(db, 'alumnos');
+const btnContainer = document.getElementById(".btnContainerMid");
+const horarioContainer = document.querySelector(".horarioContainer");
+const calendarContainer = document.querySelector(".calendarContainer");
 
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        const userId = user.uid;
+const tablaHorarioSemana = document.getElementById("tablaHorarioSemana");
+const tablaHorarioDia = document.getElementById("tablaHorarioDia");
+
+let ajustes = await getDoc(doc(db, "ajustes", "generales"))
+
+const date = new Date();
+let d = date.getDate();
+let m = date.getMonth();
+let y = date.getFullYear();
+let diaSemana = date.getDay();
+
+/* Botones */
+const btnsVolver = document.querySelectorAll(".btnVolver");
+const btnHorario = document.getElementById("btnHorario");
+const btnCalendario = document.getElementById("btnCalendario");
+const btnIzqDia = document.getElementById("btnIzqDia");
+const btnDerDia = document.getElementById("btnDerDia");
+const btnDiaH = document.getElementById("btndiaH");
+const btnSemanaH = document.getElementById("btnsemanaH");
+
+onAuthStateChanged(auth, (usuario) => {
+    if (usuario) {
+        userId = usuario.uid;
         console.log("Logueado id: " + userId);
+        alumnoRef = doc(db, "alumnos", userId);
+        onSnapshot(alumnoRef,
+            (doc) => {
+                alumData = doc.data();
+                getHorario();
+                console.log(alumData);
+            }, (error) => {
+                console.log(error.message);
+            });
     } else {
         imprimirLoginForm();
         modalAuth.show();
@@ -96,8 +137,7 @@ function login() {
 
     signInWithEmailAndPassword(auth, usuario, pwd)
         .then(cred => {
-            user = cred.user;
-            console.log('user logged in:', user.uid);
+            userId = cred.user.uid;
             authForm.reset();
             modalAuth.hide();
         }).catch(err => {
@@ -115,10 +155,23 @@ function signup() {
 
     createUserWithEmailAndPassword(auth, usuario, pwd)
         .then(cred => {
-            user = cred.user;
-            console.log('user created:', user.uid);
+            userId = cred.user.uid;
+            console.log('user created:', userId);
             authForm.reset();
             modalAuth.hide();
+            setDoc(doc(db, 'alumnos', userId), {
+                nombre: nombreUser,
+                apellidos: apellidosUser,
+                foto: "",
+                lun: [],
+                mar: [],
+                mier: [],
+                jue: [],
+                vie: [],
+                calendario: []
+            }).then(() => {
+
+            });
         }).catch(err => {
             console.log(err.message);
             errorMessage.innerText = err.message;
@@ -155,15 +208,141 @@ function imprimirSignupForm() {
     document.getElementById("signup").addEventListener("click", signup);
 }
 
-let alumnos = [];
-getDocs(alumnosRef).then((snapshot) => {
-    snapshot.docs.forEach((doc) => {
-        alumnos.push({
-            ...doc.data(),
-            id: doc.id
-        });
-    });
-    console.log(alumnos);
-}).catch(err => {
-    console.log(err.message)
-})
+/*Horario */
+function anadirColumnas() {
+    tablaHorarioSemana.innerHTML = `
+        <colgroup>
+          <col class="colHorario">
+          <col class="colLunes">
+          <col class="colMartes">
+          <col class="colMier">
+          <col class="colJueves">
+          <col class="colViernes">
+        </colgroup>
+        <tbody>
+            <tr class="cabeceraH">
+            <th scope="col" class="horasAjuste">H<span>orario</span></th>
+            <th scope="col">L<span>unes</span></th>
+            <th scope="col">Ma<span>rtes</span></th>
+            <th scope="col">Mi<span>ércoles</span></th>
+            <th scope="col">J<span>ueves</span></th>
+            <th scope="col">V<span>iernes</span></th>
+            </tr>`;
+}
+/*Tabla de horario semanal*/
+function crearTablaVacia() {
+    anadirColumnas();
+    let numFilas = ajustes.data().numHoras;
+    for (let i = 0; i < numFilas; i++) {
+        let fila = tablaHorarioSemana.insertRow();
+        for (let j = 0; j < 6; j++) {
+            let newcell = fila.insertCell();
+            newcell.id = "r" + i + "-c" + j;
+            newcell.classList.add("celdaH");
+            if (j !== 0) {
+                newcell.innerHTML = "+";
+                newcell.addEventListener("click", funcionCelda);
+            } else {
+                newcell.classList.add("horasAjuste");
+                newcell.innerHTML = "<p>Hora1</p><p>Hora2</p>"
+            }
+        }
+    }
+    tablaHorarioSemana.innerHTML += `</tbody>`
+}
+
+function funcionCelda() {
+    if (this.parentNode.parentNode.parentNode.id === "tablaHorarioSemana") {
+        let idCelda = this.id;
+        let numFila = this.parentNode.rowIndex;
+        let numCol = this.cellIndex;
+        console.log(idCelda + " " + numFila + " " + numCol);
+    } else {
+        let idCelda = this.id;
+        let numFila = this.parentNode.rowIndex;
+        let numCol = 1;
+        console.log(idCelda + " " + numFila + " " + numCol);
+    }
+}
+
+function getHorario() {
+    arrayAsignaturas = ["", alumData.lun, alumData.mar, alumData.mier, alumData.jue, alumData.vie];
+    for (let i = 1; i < 6; i++) {
+        for (let j = 0; j < arrayAsignaturas[i].length; j++) {
+            console.log(arrayAsignaturas[i][j]);
+            let cellId = "r" + j + "-c" + i;
+            document.getElementById(cellId).innerHTML = arrayAsignaturas[i][j];
+        }
+    }
+}
+
+crearTablaVacia();
+/*Tabla de horario diario*/
+function elegirColor(colgroup) {
+    tablaHorarioDia.innerHTML = "";
+    if (colgroup === 1) {
+        tablaHorarioDia.innerHTML = `<col class="colLunes">`;
+    } else if (colgroup === 2) {
+        tablaHorarioDia.innerHTML = `<col class="colMartes">`;
+    } else if (colgroup === 3) {
+        tablaHorarioDia.innerHTML = `<col class="colMier">`;
+    } else if (colgroup === 4) {
+        tablaHorarioDia.innerHTML = `<col class="colJueves">`;
+    } else if (colgroup === 5) {
+        tablaHorarioDia.innerHTML = `<col class="colViernes">`;
+    }
+}
+
+function imprimirTablaDiaH(dia) {
+    if (dia <= 1 || dia >= 6) {
+        dia = 1;
+        btnIzqDia.disabled = true;
+    } else if (dia === 5) {
+        btnDerDia.disabled = true;
+    } else {
+        btnIzqDia.disabled = false;
+        btnDerDia.disabled = false;
+    }
+    elegirColor(dia);
+    let numHorasDia = arrayAsignaturas[dia].length;
+    for (let i = 0; i <= numHorasDia; i++) {
+        let fila = tablaHorarioDia.insertRow();
+        let newcell = fila.insertCell();
+        newcell.id = tablaHorarioSemana.rows[i].cells[dia].id + "dia";
+        newcell.classList.add("celdaH");
+        newcell.innerHTML = tablaHorarioSemana.rows[i].cells[dia].innerHTML;
+        newcell.addEventListener("click", funcionCelda);
+    }
+    tablaHorarioDia.style.display = "table";
+}
+
+btnDiaH.addEventListener("click", () => {
+    tablaHorarioSemana.style.display = "none";
+    btnDiaH.style.display = "none";
+    btnIzqDia.style.display = "block";
+    btnDerDia.style.display = "block";
+    btnSemanaH.style.display = "block";
+    diaSemana = date.getDay();
+    imprimirTablaDiaH(diaSemana);
+});
+
+btnSemanaH.addEventListener("click", () => {
+    tablaHorarioDia.style.display = "none";
+    tablaHorarioSemana.style.display = "table";
+    btnSemanaH.style.display = "none";
+    btnIzqDia.style.display = "none";
+    btnDerDia.style.display = "none";
+    btnDiaH.style.display = "block";
+});
+
+btnIzqDia.addEventListener("click", () => {
+    diaSemana--;
+    imprimirTablaDiaH(diaSemana);
+});
+
+btnDerDia.addEventListener("click", () => {
+    diaSemana++;
+    imprimirTablaDiaH(diaSemana);
+});
+
+/* Calendario */

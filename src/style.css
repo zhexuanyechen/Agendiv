@@ -144,3 +144,100 @@ form>.modal-footer {
     background-color: #f89595;
     box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
 }
+
+/*Horario*/
+.tablaHorario {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tablaHorario th,
+.tablaHorario td,
+.tablaHorario tr {
+    border: 3px solid var(--colorOscuro);
+    font-size: 1.1em;
+    padding: 0.8rem;
+    text-align: center;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.tablaHorario th {
+    border-bottom: 4.5px solid var(--colorOscuro);
+    cursor: default;
+}
+
+.tablaHorario td {
+    height: 100px;
+}
+
+.celdaH {
+    cursor: pointer;
+    font-weight: bolder;
+    font-size: 1.1em;
+}
+
+.colHorario {
+    background-color: #e6e6e6;
+}
+
+.colLunes {
+    cursor: default;
+    background-color: var(--colorLunes);
+}
+
+.colMartes {
+    background-color: var(--colorMartes);
+}
+
+.colMier {
+    background-color: var(--colorMier);
+}
+
+.colJueves {
+    background-color: var(--colorJueves);
+}
+
+.colViernes {
+    background-color: var(--colorViernes);
+}
+
+@media (max-width:550px) {
+    .cabeceraH span {
+        display: none;
+    }
+
+    #tablaHorarioDia {
+        width: 95%;
+    }
+
+    #tablaHorarioSemana .celdaH {
+        padding: 2px;
+    }
+
+    #tablaHorarioSemana .dibujoHorario {
+        width: 95%;
+        max-width: 100%;
+    }
+
+    body {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width:550px) and (max-width:825px) {
+    #tablaHorarioDia {
+        width: 75%;
+    }
+
+    body {
+        font-size: 1.1rem;
+    }
+}
+
+@media (min-width:825px) {
+    #tablaHorarioDia .dibujoHorario {
+        max-width: 50%;
+    }
+}
