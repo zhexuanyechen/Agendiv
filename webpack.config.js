@@ -1,23 +1,17 @@
-const path = require('path')
+const path = require('path');
 
 module.exports = {
     mode: 'production',
-    entry: './src/index.js',
+    entry: {
+        index: './src/index.js',
+        init: './src/inicializacion.js'
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js'
+        filename: '[name].js'
     },
     experiments: {
         topLevelAwait: true
     },
-    watch: false,
-    module: {
-        rules: [{
-            test: /\.css$/,
-            use: [
-                'style-loader',
-                'css-loader'
-            ]
-        }]
-    }
+    watch: false
 }

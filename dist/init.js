@@ -1,0 +1,1 @@
+document.getElementById(".btnContainerMid"),document.querySelector(".horarioContainer"),document.querySelector(".calendarContainer"),document.querySelectorAll(".btnVolver"),document.getElementById("btnHorario"),document.getElementById("btnCalendario");
