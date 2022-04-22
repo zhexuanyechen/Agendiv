@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "agendiv-atenpace-e8772"
+  },
+  "targets": {
+    "agendiv-atenpace-e8772": {
+      "hosting": {
+        "alumnos": [
+          "agendiv-atenpace-e8772"
+        ],
+        "profesores": [
+          "agendiv-atenpace-prof"
+        ]
+      }
+    }
+  }
+}

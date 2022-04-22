@@ -1,0 +1,31 @@
+{
+  "hosting": [{
+    "target": "alumnos",
+    "public": "dist/alumnos",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }, {
+    "target": "profesores",
+    "public": "dist/profesores",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/profesores.html"
+      }
+    ]
+  }]
+}

@@ -250,6 +250,11 @@ function funcionCelda() {
         let numCol = 1;
         console.log(idCelda + " " + numFila + " " + numCol);
     }
+    if (this.innerHTML != "+") {
+
+    } else {
+
+    }
 }
 
 crearTablaVacia(ajustes.data().numHoras);
@@ -306,6 +311,15 @@ btnDiaH.addEventListener("click", () => {
     btnSemanaH.style.display = "block";
     let diaSemana = new Date().getDay()
     imprimirTablaDiaH(diaSemana);
+});
+
+btnSemanaH.addEventListener("click", () => {
+    tablaHorarioDia.style.display = "none";
+    tablaHorarioSemana.style.display = "table";
+    btnSemanaH.style.display = "none";
+    btnIzqDia.style.display = "none";
+    btnDerDia.style.display = "none";
+    btnDiaH.style.display = "block";
 });
 
 btnIzqDia.addEventListener("click", () => {
