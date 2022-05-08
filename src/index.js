@@ -23,11 +23,6 @@ import {
 
 import Modal from 'bootstrap/js/dist/modal';
 
-import {
-    getStorage,
-    ref
-} from "firebase/storage";
-
 /*Inicializacion */
 const firebaseConfig = {
     apiKey: "AIzaSyAeFEDqLmHUdmHUXSbfpGfWwWtnGsBHuN4",
@@ -42,8 +37,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage();
-const storageRef = ref(storage, "pictosHorario");
 
 const modalAuth = new Modal(document.getElementById("modalAuth"));
 const tituloModalAuth = document.getElementById("tituloModalAuth");
@@ -205,6 +198,8 @@ function getHorario(alumData) {
         for (let j = 0; j < arrayAsignaturas[i].length; j++) {
             let cellId = "r" + j + "-c" + i;
             document.getElementById(cellId).innerHTML = arrayAsignaturas[i][j];
+            let asiganadir = arrayPictosHorario.find(asig => asig.nombre === arrayAsignaturas[i][j]);
+            document.getElementById(cellId).innerHTML += `<img src="${asiganadir.foto}"class="rounded dibujo-cc">`;
         }
     }
 }
@@ -282,7 +277,7 @@ function imprimirModalIntermedio() {
     div.append(btnBorrar, btnEditar);
     contenidoModalAdd.appendChild(div);
     btnEditar.addEventListener("click", () => {
-        let text = `<i class="fas fa-plus"></i>Añadir`;
+        let text = `<i class="fas fa-edit"></i>Cambiar`;
         imprimirModalAdd(text);
     });
     btnBorrar.addEventListener("click", deleteAsignatura);
@@ -334,12 +329,14 @@ function cargarAsignaturasModal() {
 }
 
 async function addAsignatura() {
-    let diaSemana = getdiaHorario(numCol);
+    let diaSemana = getDiaHorario(numCol);
     let seleccionado = document.querySelector("input[name='opcionHorario']:checked");
+    console.log(seleccionado);
     let arrayAux = alumData[diaSemana];
     if (seleccionado) {
         let asiganadir = arrayPictosHorario.find(asig => asig.nombre == seleccionado.value);
         arrayAux[numFila] = asiganadir.nombre;
+        console.log(arrayAux);
         document.getElementById(idCeldaClickada).innerHTML = "<img src='" + asiganadir.foto + "' class='rounded dibujoHorario'>";
         addForm.reset();
         await updateDoc(alumnoRef, {
@@ -350,7 +347,7 @@ async function addAsignatura() {
 }
 
 async function deleteAsignatura() {
-    let diaSemana = getdiaHorario(numCol);
+    let diaSemana = getDiaHorario(numCol);
     let arrayAux = alumData[diaSemana];
     arrayAux[numFila] = "+";
     console.log(arrayAux);
@@ -438,13 +435,13 @@ btnDerDia.addEventListener("click", () => {
 let arrayPictosHorario = [];
 const pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
 pictosHorarioSnapshot.forEach((doc) => {
-    arrayPictosHorario.push(doc.data());
+    let pictoData = doc.data();
+    pictoData.id = doc.id
+    arrayPictosHorario.push(pictoData);
 });
 console.log(arrayPictosHorario);
-//localStorage.setItem("pictosHorario", JSON.stringify(arrayPictosHorario));
-//let asignaturas = JSON.parse(localStorage.getItem("pictosHorario"));
 
-function getdiaHorario(colnum) {
+function getDiaHorario(colnum) {
     let diaAux;
     switch (colnum) {
         case 1:
