@@ -8,19 +8,18 @@
     <link rel="shortcut icon" href="#" />
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
+    <script src="https://kit.fontawesome.com/0232fc32b2.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <div id="modalAuth" class="modal" tabindex="-1">
+    <div id="modalAuth" class="modal" data-bs-backdrop="static" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 id="tituloModalAuth" class="modal-title"></h3>
                 </div>
                 <div id="contenidoModalAuth" class="modal-body">
-                    <form id="authForm">
 
-                    </form>
                 </div>
             </div>
         </div>
@@ -33,7 +32,7 @@
                     <h3 id="tituloModalAdd" class="modal-title"></h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div id="contenidoModalFun" class="modal-body">
+                <div id="contenidoModalAdd" class="modal-body">
 
                 </div>
             </div>
@@ -57,7 +56,7 @@
                 </ul>
             </div>
             <div>
-                <button type="button" id="logout" class="btn  btnRojo mt-3" data-bs-dismiss="modal">Cerrar
+                <button type="button" id="logout" class="btn  btnRojo mt-3">Cerrar
                     sesión</button>
             </div>
         </div>

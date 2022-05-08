@@ -1,5 +1,5 @@
 /*Containers */
-const btnContainer = document.getElementById(".btnContainerMid");
+const btnContainer = document.getElementById("btnContainerMid");
 const horarioContainer = document.querySelector(".horarioContainer");
 const calendarContainer = document.querySelector(".calendarContainer");
 
