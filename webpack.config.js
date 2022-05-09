@@ -5,19 +5,24 @@ var config = {
     experiments: {
         topLevelAwait: true
     },
-    watch: false
+    watch: false,
 }
 
 var configAlum = Object.assign({}, config, {
     name: "configAlum",
-    entry: {
-        index: './src/index.js',
-        init: './src/inicializacion.js',
-        calendario: './src/calendario.js'
-    },
+    entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, 'dist/alumnos'),
         filename: '[name].js'
+    },
+    module: {
+        rules: [{
+            test: /\.css$/,
+            use: [
+                'style-loader',
+                'css-loader'
+            ]
+        }]
     }
 });
 

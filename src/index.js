@@ -23,6 +23,16 @@ import {
 
 import Modal from 'bootstrap/js/dist/modal';
 
+import {
+    Calendar
+} from '@fullcalendar/core';
+import interactionPlugin from '@fullcalendar/interaction';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list';
+import momentPlugin from '@fullcalendar/moment';
+import esLocale from '@fullcalendar/core/locales/es';
+
 /*Inicializacion */
 const firebaseConfig = {
     apiKey: "AIzaSyAeFEDqLmHUdmHUXSbfpGfWwWtnGsBHuN4",
@@ -85,6 +95,33 @@ onAuthStateChanged(auth, (usuario) => {
         imprimirLoginForm();
         modalAuth.show();
     }
+});
+
+/*Containers */
+const btnContainer = document.getElementById("btnContainerMid");
+const horarioContainer = document.getElementById("horarioContainer");
+const calendarContainer = document.getElementById("calendarContainer");
+
+/*Botones*/
+const btnsVolver = document.querySelectorAll(".btnVolver");
+const btnHorario = document.getElementById("btnHorario");
+const btnCalendario = document.getElementById("btnCalendario");
+const btnDiaH = document.getElementById("btndiaH");
+const btnIzqDia = document.getElementById("btnIzqDia");
+const btnDerDia = document.getElementById("btnDerDia");
+const btnSemanaH = document.getElementById("btnsemanaH");
+
+btnHorario.addEventListener("click", () => {
+    horarioContainer.style.display = "block";
+    btnContainer.style.display = "none";
+    calendarContainer.style.display = "none";
+});
+
+btnCalendario.addEventListener("click", () => {
+    horarioContainer.style.display = "none";
+    btnContainer.style.display = "none";
+    calendarContainer.style.display = "block";
+    renderizarCal();
 });
 
 const logoutButton = document.getElementById('logout')
@@ -201,8 +238,8 @@ function imprimirSignupForm() {
 }
 
 /*Horario */
-function getHorario(alumData) {
-    arrayAsignaturas = ["", alumData.lun, alumData.mar, alumData.mier, alumData.jue, alumData.vie];
+function getHorario(alumAsignaturas) {
+    arrayAsignaturas = ["", alumAsignaturas.lun, alumAsignaturas.mar, alumAsignaturas.mier, alumAsignaturas.jue, alumAsignaturas.vie];
     for (let i = 1; i < 6; i++) {
         for (let j = 0; j < arrayAsignaturas[i].length; j++) {
             let cellId = "r" + j + "-c" + i;
@@ -413,11 +450,6 @@ function imprimirTablaDiaH() {
     tablaHorarioDia.style.display = "table";
 }
 
-const btnDiaH = document.getElementById("btndiaH");
-const btnIzqDia = document.getElementById("btnIzqDia");
-const btnDerDia = document.getElementById("btnDerDia");
-const btnSemanaH = document.getElementById("btnsemanaH");
-
 btnDiaH.addEventListener("click", () => {
     tablaHorarioSemana.style.display = "none";
     btnDiaH.style.display = "none";
@@ -468,4 +500,89 @@ function getDiaHorario(colnum) {
             break;
     }
     return diaAux;
+}
+
+/*Calendario*/
+let calendario = document.getElementById("calendar");
+
+function renderizarCal() {
+    let calendar = new Calendar(calendario, {
+        plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, momentPlugin],
+        headerToolbar: {
+            start: 'prev',
+            center: 'title dayGridMonth,timeGridWeek,listMonth',
+            end: 'next'
+        },
+        buttonText: {
+            month: 'Mes',
+            week: 'Semana',
+            list: 'Agenda'
+        },
+        initialView: 'dayGridMonth',
+        handleWindowResize: true,
+        windowResizeDelay: 5,
+        showNonCurrentDates: false,
+        fixedWeekCount: false,
+        editable: false,
+        slotMinTime: "08:00:00",
+        contentHeight: "auto",
+        navLinks: true,
+        eventDurationEditable: false,
+        dayMaxEventRows: true,
+        views: {
+            dayGridMonth: {
+                dayMaxEventRows: 2,
+                stickyHeaderDates: false,
+                titleFormat: function () {
+                    let date = new Date();
+                    var options = {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    };
+                    return date.toLocaleDateString("es-ES", options);
+                }
+            },
+            listMonth: {
+                listDayFormat: {
+                    month: 'long',
+                    listDaySideFormat: false,
+                    day: 'numeric',
+                    weekday: 'long'
+                },
+                titleFormat: function () {
+                    let date = new Date();
+                    var options = {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    };
+                    return date.toLocaleDateString("es-ES", options);
+                }
+            }
+        },
+        slotDuration: "01:00:00",
+        height: "auto",
+        slotEventOverlap: false,
+        allDaySlot: false,
+        slotLabelFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+        },
+        events: getEventosCalendario,
+        eventClassNames: 'eventoCal',
+        defaultTimedEventDuration: '2:00',
+        dayHeaderFormat: {
+            weekday: 'short'
+        },
+        locale: esLocale
+    });
+    calendar.render();
+}
+
+function getEventosCalendario() {
+    let eventosArray = alumData.calendario;
+    return eventosArray;
 }
