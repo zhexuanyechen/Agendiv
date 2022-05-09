@@ -57,6 +57,15 @@ let ajustes = await getDoc(doc(db, "ajustes", "generales"));
 let numHorasHorario = ajustes.data().numHoras;
 let unsubscribe;
 let diaSemana = new Date().getDay();
+let arrayPictosHorario = [];
+
+const pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
+pictosHorarioSnapshot.forEach((doc) => {
+    let pictoData = doc.data();
+    pictoData.id = doc.id
+    arrayPictosHorario.push(pictoData);
+});
+console.log(arrayPictosHorario);
 
 onAuthStateChanged(auth, (usuario) => {
     if (usuario) {
@@ -84,6 +93,8 @@ logoutButton.addEventListener('click', () => {
         .then(() => {
             console.log('user signed out');
             unsubscribe();
+            imprimirLoginForm();
+            modalAuth.show();
         })
         .catch(err => {
             console.log(err.message)
@@ -101,15 +112,13 @@ function imprimirLoginForm() {
             <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
         </div>
         <div class="modal-footer row align-items-start">
-            <div class="col-md-5">
-              <p class="enlaceaSignup" tabindex="0">No tienes cuenta? Registrate aqui.</p>
-            </div>
+            <p id="enlaceaSignup" class="col-md-5" tabindex="0">No tienes cuenta? Registrate aqui.</p>
             <button type="button" id="login" class="botonA btnVerde col-md-5">Inicio
               sesión</button>
         </div>
         <p class="errorMessage text-center"></p>`;
     tituloModalAuth.innerText = "Iniciar Sesión";
-    document.querySelector(".enlaceaSignup").addEventListener("click", imprimirSignupForm);
+    document.getElementById("enlaceaSignup").addEventListener("click", imprimirSignupForm);
     document.getElementById("login").addEventListener("click", login);
 }
 
@@ -162,7 +171,7 @@ function signup() {
 }
 
 function imprimirSignupForm() {
-    contenidoModalAuth.innerHTML = `
+    authForm.innerHTML = `
         <div class="mb-2 form-group row gx-3">
             <div class="col-6">
               <label for="nombre" class="form-label">Nombre</label>
@@ -197,9 +206,12 @@ function getHorario(alumData) {
     for (let i = 1; i < 6; i++) {
         for (let j = 0; j < arrayAsignaturas[i].length; j++) {
             let cellId = "r" + j + "-c" + i;
-            document.getElementById(cellId).innerHTML = arrayAsignaturas[i][j];
-            let asiganadir = arrayPictosHorario.find(asig => asig.nombre === arrayAsignaturas[i][j]);
-            document.getElementById(cellId).innerHTML += `<img src="${asiganadir.foto}"class="rounded dibujo-cc">`;
+            if (arrayAsignaturas[i][j] !== "+") {
+                let asiganadir = arrayPictosHorario.find(asig => asig.nombre === arrayAsignaturas[i][j]);
+                document.getElementById(cellId).innerHTML = `<img src="${asiganadir.foto}"class="rounded dibujoHorario"><p>${arrayAsignaturas[i][j]}</p>`;
+            } else {
+                document.getElementById(cellId).innerHTML = `<img src="pictogramas/+.png" class="rounded addHorario"><p>+</p>`;
+            }
         }
     }
 }
@@ -234,7 +246,7 @@ function crearTablaVacia(numFilas) {
             newcell.id = "r" + i + "-c" + j;
             newcell.classList.add("celdaH");
             if (j !== 0) {
-                newcell.innerHTML = "+";
+                newcell.innerHTML = `<img src="pictogramas/+.png" class="rounded addHorario"><p>+</p>`;
                 newcell.addEventListener("click", funcionCelda, false);
             } else {
                 newcell.classList.add("horasAjuste");
@@ -252,8 +264,10 @@ function funcionCelda() {
     idCeldaClickada = this.id;
     numFila = parseInt(idCeldaClickada[1]);
     numCol = parseInt(idCeldaClickada[4]);
-    console.log(idCeldaClickada + " " + numFila + " " + numCol);
-    if (this.innerHTML != "+") {
+    let celda = document.getElementById(idCeldaClickada);
+    let lastChild = celda.lastChild;
+    console.log(celda);
+    if (lastChild.innerText != "+") {
         imprimirModalIntermedio();
     } else {
         let text = `<i class="fas fa-edit"></i>Cambiar`;
@@ -298,6 +312,7 @@ function imprimirModalAdd(text) {
     let btnScrollDivClone = btnScrollDiv.cloneNode(true);
     let addForm = document.createElement("form");
     addForm.id = "addForm";
+    addForm.classList.add("row", "row-cols-2", "justify-content-around")
     contenidoModalAdd.append(btnScrollDiv, addForm, btnScrollDivClone);
     cargarAsignaturasModal();
     let btnModalDiv = document.createElement("div");
@@ -432,14 +447,6 @@ btnDerDia.addEventListener("click", () => {
     imprimirTablaDiaH(diaSemana);
 });
 
-let arrayPictosHorario = [];
-const pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
-pictosHorarioSnapshot.forEach((doc) => {
-    let pictoData = doc.data();
-    pictoData.id = doc.id
-    arrayPictosHorario.push(pictoData);
-});
-console.log(arrayPictosHorario);
 
 function getDiaHorario(colnum) {
     let diaAux;

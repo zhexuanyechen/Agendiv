@@ -99,14 +99,14 @@ body {
     font-weight: bold;
 }
 
-.enlaceaSignup {
+#enlaceaSignup {
     cursor: pointer;
     text-align: right;
     text-decoration: underline;
     font-weight: bold;
 }
 
-.enlaceaSignup:hover {
+#enlaceaSignup:hover {
     color: #01468a;
 }
 
@@ -120,6 +120,11 @@ form>.modal-footer {
     background-color: #e7e7e7;
     border-color: #545454;
     color: black;
+}
+
+#addForm {
+    overflow-y: auto;
+    max-height: 50vh;
 }
 
 /*Botones aceptar-rechazar*/
@@ -201,6 +206,66 @@ form>.modal-footer {
 
 .colViernes {
     background-color: var(--colorViernes);
+}
+
+.dibujoHorario, .addHorario {
+    display: block;
+    margin: auto;
+    width: 70%;
+    height: auto;
+}
+
+.dibujoHorario{
+    cursor: pointer;
+    display: block;
+    margin: auto;
+    min-width: 70%;
+    max-width: 85%;
+    height: auto;
+    background-color: white;
+}
+
+.dibujoHorario:hover,
+.dibujoHorario:focus {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.dibujoHorario+p, .addHorario+p{
+    display: none;
+}
+
+/*Modal Asignaturas*/
+
+.dibujo-cc {
+    cursor: pointer;
+    display: block;
+    margin: auto;
+    width: 100px;
+    height: 100px;
+    margin: 0.3em auto;
+}
+
+.dibujoInput {
+    background-color: white;
+    border: 2px solid var(--colorOscuro);
+    border-radius: 5px;
+    margin-bottom: 0.3em;
+    height: 100%;
+    vertical-align: middle;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dibujoInput:hover {
+    background-color: rgb(233, 233, 233);
+}
+
+.imgLabel {
+    display: inline-block;
+    width: 85%;
+    cursor: pointer;
+    vertical-align: middle;
 }
 
 @media (max-width:550px) {

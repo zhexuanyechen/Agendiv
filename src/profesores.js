@@ -69,11 +69,11 @@ function checkInputImage() {
 async function uploadInputImageHorario() {
     if (inputImage.files.length !== 0) {
         let image = inputImage.files[0];
-        let imageName = image.name.split(".", 1)[0];
+        let imageName = image.name;
         const pictosHorarioRef = ref(storage, '/pictosHorario/' + imageName);
         uploadImage(pictosHorarioRef).then((imgUrl) => {
             addDoc(collection(db, 'pictosHorario'), {
-                nombre: imageName,
+                nombre: imageName.split(".", 1)[0],
                 foto: imgUrl,
                 audio: "prueba"
             }).then(() => {
