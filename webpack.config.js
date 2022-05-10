@@ -6,6 +6,7 @@ var config = {
         topLevelAwait: true
     },
     watch: false,
+    cache: false
 }
 
 var configAlum = Object.assign({}, config, {
@@ -13,7 +14,7 @@ var configAlum = Object.assign({}, config, {
     entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, 'dist/alumnos'),
-        filename: '[name].js'
+        filename: 'index.js'
     },
     module: {
         rules: [{

@@ -319,6 +319,7 @@ function funcionCelda() {
     modalAdd.show();
 }
 console.log("hoalaaaaaaaaaaaaaaa");
+
 /*Imprimir modal */
 function imprimirModalIntermedio(title, editBtnFun, deleteBtnFun) {
     contenidoModalAdd.innerHTML = "";
