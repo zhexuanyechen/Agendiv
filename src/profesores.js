@@ -85,6 +85,25 @@ async function uploadInputImageHorario() {
     }
 }
 
+async function uploadInputImageCalendario() {
+    if (inputImage.files.length !== 0) {
+        let image = inputImage.files[0];
+        let imageName = image.name;
+        const pictosCalRef = ref(storage, '/pictosCalendario/' + imageName);
+        uploadImage(pictosCalRef).then((imgUrl) => {
+            addDoc(collection(db, 'pictosCalendario'), {
+                nombre: imageName.split(".", 1)[0],
+                foto: imgUrl,
+                audio: "prueba"
+            }).then(() => {
+                console.log('Se ha subido el pictograma ' + imageName + ' a la base de datos.');
+            }).catch((error => {
+                console.log(error);
+            }));
+        })
+    }
+}
+
 function uploadImage(pathRef) {
     const pictosHorarioRef = ref(storage, pathRef);
     const uploadImage = uploadBytesResumable(pictosHorarioRef, inputImage.files[0]);
@@ -114,7 +133,4 @@ function uploadImage(pathRef) {
 
 btnUploadHorario.addEventListener("click", uploadInputImageHorario, false);
 
-async function uploadInputImageCalendario() {
-
-}
 btnUploadCalendario.addEventListener("click", uploadInputImageCalendario, false);

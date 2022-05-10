@@ -48,6 +48,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/*Modales */
 const modalAuth = new Modal(document.getElementById("modalAuth"));
 const tituloModalAuth = document.getElementById("tituloModalAuth");
 const authForm = document.getElementById("authForm");
@@ -55,32 +56,45 @@ const modalAdd = new Modal(document.getElementById("modalAdd"));
 const tituloModalAdd = document.getElementById("tituloModalAdd");
 const contenidoModalAdd = document.getElementById("contenidoModalAdd");
 
-let userId = "";
-let alumnoRef;
-let arrayAsignaturas = [];
-let alumData;
+/*Containers */
+const btnContainer = document.getElementById("btnContainerMid");
+const horarioContainer = document.getElementById("horarioContainer");
+const calendarContainer = document.getElementById("calendarContainer");
 
+/*Botones*/
+const btnsVolver = document.querySelectorAll(".btnVolver");
+const btnHorario = document.getElementById("btnHorario");
+const btnCalendario = document.getElementById("btnCalendario");
+const btnDiaH = document.getElementById("btndiaH");
+const btnIzqDia = document.getElementById("btnIzqDia");
+const btnDerDia = document.getElementById("btnDerDia");
+const btnSemanaH = document.getElementById("btnsemanaH");
+const logoutButton = document.getElementById('logout');
+
+/*Tablas*/
 const tablaHorarioSemana = document.getElementById("tablaHorarioSemana");
 const tablaHorarioDia = document.getElementById("tablaHorarioDia");
+let calendario = document.getElementById("calendar");
 
-let ajustes = await getDoc(doc(db, "ajustes", "generales"));
-let numHorasHorario = ajustes.data().numHoras;
+let userId = "";
+let alumnoRef, alumData;
+let arrayAsignaturas = [];
+
 let unsubscribe;
 let diaSemana = new Date().getDay();
 let arrayPictosHorario = [];
+let arrayPictosCalendario = [];
 
+let idCeldaClickada, numFila, numCol;
+
+let ajustes = await getDoc(doc(db, "ajustes", "generales"));
 const pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
-pictosHorarioSnapshot.forEach((doc) => {
-    let pictoData = doc.data();
-    pictoData.id = doc.id
-    arrayPictosHorario.push(pictoData);
-});
-console.log(arrayPictosHorario);
+const pictosCalendarioSnapshot = await getDocs(collection(db, "pictosCalendario"));
+let numHorasHorario = ajustes.data().numHoras;
 
 onAuthStateChanged(auth, (usuario) => {
     if (usuario) {
         userId = usuario.uid;
-        console.log("Logueado id: " + userId);
         alumnoRef = doc(db, "alumnos", userId);
         modalAuth.hide();
         unsubscribe = onSnapshot(alumnoRef,
@@ -97,19 +111,17 @@ onAuthStateChanged(auth, (usuario) => {
     }
 });
 
-/*Containers */
-const btnContainer = document.getElementById("btnContainerMid");
-const horarioContainer = document.getElementById("horarioContainer");
-const calendarContainer = document.getElementById("calendarContainer");
+pictosHorarioSnapshot.forEach((doc) => {
+    let pictoData = doc.data();
+    pictoData.id = doc.id;
+    arrayPictosHorario.push(pictoData);
+});
 
-/*Botones*/
-const btnsVolver = document.querySelectorAll(".btnVolver");
-const btnHorario = document.getElementById("btnHorario");
-const btnCalendario = document.getElementById("btnCalendario");
-const btnDiaH = document.getElementById("btndiaH");
-const btnIzqDia = document.getElementById("btnIzqDia");
-const btnDerDia = document.getElementById("btnDerDia");
-const btnSemanaH = document.getElementById("btnsemanaH");
+pictosHorarioSnapshot.forEach((doc) => {
+    let pictoData = doc.data();
+    pictoData.id = doc.id;
+    arrayPictosCalendario.push(pictoData);
+});
 
 btnHorario.addEventListener("click", () => {
     horarioContainer.style.display = "block";
@@ -124,7 +136,6 @@ btnCalendario.addEventListener("click", () => {
     renderizarCal();
 });
 
-const logoutButton = document.getElementById('logout')
 logoutButton.addEventListener('click', () => {
     signOut(auth)
         .then(() => {
@@ -293,29 +304,25 @@ function crearTablaVacia(numFilas) {
     }
 }
 
-let idCeldaClickada;
-let numFila;
-let numCol;
-
 function funcionCelda() {
     idCeldaClickada = this.id;
     numFila = parseInt(idCeldaClickada[1]);
     numCol = parseInt(idCeldaClickada[4]);
     let celda = document.getElementById(idCeldaClickada);
     let lastChild = celda.lastChild;
-    console.log(celda);
     if (lastChild.innerText != "+") {
-        imprimirModalIntermedio();
+        imprimirModalInterHorario();
     } else {
-        let text = `<i class="fas fa-edit"></i>Cambiar`;
-        imprimirModalAdd(text);
+        let text = `<i class="fas fa-plus"></i>Añadir`;
+        imprimirModalAddHorario(text);
     }
     modalAdd.show();
 }
-
-function imprimirModalIntermedio() {
+console.log("hoalaaaaaaaaaaaaaaa");
+/*Imprimir modal */
+function imprimirModalIntermedio(title, editBtnFun, deleteBtnFun) {
     contenidoModalAdd.innerHTML = "";
-    tituloModalAdd.innerText = "¿Quieres cambiar o borrar una actividad?";
+    tituloModalAdd.innerText = title;
     let div = document.createElement("div");
     div.id = "modalIntermedio";
     div.classList.add("row", "row-col-2", "justify-content-around", "align-items-stretch");
@@ -329,12 +336,23 @@ function imprimirModalIntermedio() {
     contenidoModalAdd.appendChild(div);
     btnEditar.addEventListener("click", () => {
         let text = `<i class="fas fa-edit"></i>Cambiar`;
-        imprimirModalAdd(text);
+        editBtnFun(text);
     });
-    btnBorrar.addEventListener("click", deleteAsignatura);
+    btnBorrar.addEventListener("click", deleteBtnFun);
 }
 
-function imprimirModalAdd(text) {
+function imprimirModalInterHorario() {
+    let title = "¿Quieres cambiar o borrar una actividad?";
+    imprimirModalIntermedio(title, imprimirModalAdd, deleteAsignatura);
+}
+
+function imprimirModalInterCalendario() {
+    let title = "¿Quieres cambiar o borrar un evento?";
+    imprimirModalIntermedio(title, imprimirModalAdd, deleteEvento);
+}
+
+function imprimirModalAdd(text, addBtnFun, carga) {
+    console.log(text);
     contenidoModalAdd.innerHTML = "";
     tituloModalAdd.innerText = "Qué quieres poner?";
     let btnScrollDiv = document.createElement("div");
@@ -351,7 +369,7 @@ function imprimirModalAdd(text) {
     addForm.id = "addForm";
     addForm.classList.add("row", "row-cols-2", "justify-content-around")
     contenidoModalAdd.append(btnScrollDiv, addForm, btnScrollDivClone);
-    cargarAsignaturasModal();
+    carga();
     let btnModalDiv = document.createElement("div");
     btnModalDiv.classList.add("modal-footer", "row", "row-col-2", "align-items-stretch", "justify-content-around");
     let btnCancelar = document.createElement("button");
@@ -363,8 +381,12 @@ function imprimirModalAdd(text) {
     btnAdd.innerHTML = `${text}`;
     btnModalDiv.append(btnCancelar, btnAdd);
     contenidoModalAdd.append(btnModalDiv);
-    btnAdd.addEventListener("click", addAsignatura);
+    btnAdd.addEventListener("click", addBtnFun);
+}
 
+function imprimirModalAddHorario(text) {
+    console.log(text);
+    imprimirModalAdd(text, addAsignatura, cargarAsignaturasModal);
 }
 
 function cargarAsignaturasModal() {
@@ -376,7 +398,6 @@ function cargarAsignaturasModal() {
                   </div>
                 </div>`
     }
-    console.log(arrayPictosHorario);
     document.getElementById("addForm").innerHTML = html;
 }
 
@@ -399,6 +420,17 @@ async function addAsignatura() {
 }
 
 async function deleteAsignatura() {
+    let diaSemana = getDiaHorario(numCol);
+    let arrayAux = alumData[diaSemana];
+    arrayAux[numFila] = "+";
+    console.log(arrayAux);
+    await updateDoc(alumnoRef, {
+        [diaSemana]: arrayAux
+    });
+    modalAdd.hide();
+}
+
+async function deleteEvento() {
     let diaSemana = getDiaHorario(numCol);
     let arrayAux = alumData[diaSemana];
     arrayAux[numFila] = "+";
@@ -503,7 +535,6 @@ function getDiaHorario(colnum) {
 }
 
 /*Calendario*/
-let calendario = document.getElementById("calendar");
 
 function renderizarCal() {
     let calendar = new Calendar(calendario, {
@@ -570,6 +601,9 @@ function renderizarCal() {
         slotLabelFormat: {
             hour: '2-digit',
             minute: '2-digit',
+        },
+        moreLinkContent: function (arg) {
+            arg.text = "+" + arg.num;
         },
         events: getEventosCalendario,
         eventClassNames: 'eventoCal',
