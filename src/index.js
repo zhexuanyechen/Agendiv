@@ -79,6 +79,7 @@ let calendario = document.getElementById("calendar");
 let userId = "";
 let alumnoRef, alumData;
 let arrayAsignaturas = [];
+let arrayCalendario = [];
 
 let unsubscribe;
 let diaSemana = new Date().getDay();
@@ -100,8 +101,8 @@ onAuthStateChanged(auth, (usuario) => {
         unsubscribe = onSnapshot(alumnoRef,
             (doc) => {
                 alumData = doc.data();
+                arrayCalendario = getArrayCalendario(alumData.calendario);
                 getHorario(alumData);
-                console.log(alumData);
             }, (error) => {
                 console.log(error.message);
             });
@@ -111,13 +112,14 @@ onAuthStateChanged(auth, (usuario) => {
     }
 });
 
+/*Funcion botones */
 pictosHorarioSnapshot.forEach((doc) => {
     let pictoData = doc.data();
     pictoData.id = doc.id;
     arrayPictosHorario.push(pictoData);
 });
 
-pictosHorarioSnapshot.forEach((doc) => {
+pictosCalendarioSnapshot.forEach((doc) => {
     let pictoData = doc.data();
     pictoData.id = doc.id;
     arrayPictosCalendario.push(pictoData);
@@ -147,6 +149,43 @@ logoutButton.addEventListener('click', () => {
         .catch(err => {
             console.log(err.message)
         })
+});
+
+btnsVolver.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        horarioContainer.style.display = "none";
+        calendarContainer.style.display = "none";
+        btnContainer.style.display = "block";
+    });
+});
+
+btnDiaH.addEventListener("click", () => {
+    tablaHorarioSemana.style.display = "none";
+    btnDiaH.style.display = "none";
+    btnIzqDia.style.display = "block";
+    btnDerDia.style.display = "block";
+    btnSemanaH.style.display = "block";
+    diaSemana = new Date().getDay()
+    imprimirTablaDiaH(diaSemana);
+});
+
+btnSemanaH.addEventListener("click", () => {
+    tablaHorarioDia.style.display = "none";
+    tablaHorarioSemana.style.display = "table";
+    btnSemanaH.style.display = "none";
+    btnIzqDia.style.display = "none";
+    btnDerDia.style.display = "none";
+    btnDiaH.style.display = "block";
+});
+
+btnIzqDia.addEventListener("click", () => {
+    diaSemana--;
+    imprimirTablaDiaH(diaSemana);
+});
+
+btnDerDia.addEventListener("click", () => {
+    diaSemana++;
+    imprimirTablaDiaH(diaSemana);
 });
 
 function imprimirLoginForm() {
@@ -313,12 +352,10 @@ function funcionCelda() {
     if (lastChild.innerText != "+") {
         imprimirModalInterHorario();
     } else {
-        let text = `<i class="fas fa-plus"></i>Añadir`;
-        imprimirModalAddHorario(text);
+        imprimirModalAddHorario();
     }
     modalAdd.show();
 }
-console.log("hoalaaaaaaaaaaaaaaa");
 
 /*Imprimir modal */
 function imprimirModalIntermedio(title, editBtnFun, deleteBtnFun) {
@@ -344,16 +381,18 @@ function imprimirModalIntermedio(title, editBtnFun, deleteBtnFun) {
 
 function imprimirModalInterHorario() {
     let title = "¿Quieres cambiar o borrar una actividad?";
-    imprimirModalIntermedio(title, imprimirModalAdd, deleteAsignatura);
+    imprimirModalIntermedio(title, imprimirModalAddHorario, deleteAsignatura);
 }
 
-function imprimirModalInterCalendario() {
+function imprimirModalInterCalendario(eventId) {
     let title = "¿Quieres cambiar o borrar un evento?";
-    imprimirModalIntermedio(title, imprimirModalAdd, deleteEvento);
+    let deleteBtnFun = () => {
+        deleteEventoCal(eventId);
+    }
+    imprimirModalIntermedio(title, imprimirModalAddCalendario, deleteBtnFun);
 }
 
 function imprimirModalAdd(text, addBtnFun, carga) {
-    console.log(text);
     contenidoModalAdd.innerHTML = "";
     tituloModalAdd.innerText = "Qué quieres poner?";
     let btnScrollDiv = document.createElement("div");
@@ -385,17 +424,37 @@ function imprimirModalAdd(text, addBtnFun, carga) {
     btnAdd.addEventListener("click", addBtnFun);
 }
 
-function imprimirModalAddHorario(text) {
-    console.log(text);
+function imprimirModalAddHorario() {
+    let text = `<i class="fas fa-plus"></i>Añadir`;
     imprimirModalAdd(text, addAsignatura, cargarAsignaturasModal);
+}
+
+function imprimirModalAddCalendario(fechaCalClickada, contador) {
+    let text = `<i class="fas fa-plus"></i>Añadir`;
+    let addEventFun = () => {
+        addEventoCal(fechaCalClickada, contador);
+    }
+    imprimirModalAdd(text, addEventFun, cargarEventosModal);
 }
 
 function cargarAsignaturasModal() {
     let html = "";
     for (let i = 0; i < arrayPictosHorario.length; i++) {
-        html += `<div class="col-4">
+        html += `<div class="col-5">
                   <div class="dibujoInput"><input type="radio" name="opcionHorario" id="${arrayPictosHorario[i].id}" value="${arrayPictosHorario[i].nombre}">
                     <label for="${arrayPictosHorario[i].id}" class="imgLabel"><img src="${arrayPictosHorario[i].foto}"class="rounded dibujo-cc"></label>
+                  </div>
+                </div>`
+    }
+    document.getElementById("addForm").innerHTML = html;
+}
+
+function cargarEventosModal() {
+    let html = "";
+    for (let i = 0; i < arrayPictosCalendario.length; i++) {
+        html += `<div class="col-5">
+                  <div class="dibujoInput"><input type="radio" name="opcionCalendario" id="${arrayPictosCalendario[i].id}" value="${arrayPictosCalendario[i].nombre}">
+                    <label for="${arrayPictosCalendario[i].id}" class="imgLabel"><img src="${arrayPictosCalendario[i].foto}"class="rounded dibujo-cc"></label>
                   </div>
                 </div>`
     }
@@ -405,12 +464,10 @@ function cargarAsignaturasModal() {
 async function addAsignatura() {
     let diaSemana = getDiaHorario(numCol);
     let seleccionado = document.querySelector("input[name='opcionHorario']:checked");
-    console.log(seleccionado);
     let arrayAux = alumData[diaSemana];
     if (seleccionado) {
         let asiganadir = arrayPictosHorario.find(asig => asig.nombre == seleccionado.value);
         arrayAux[numFila] = asiganadir.nombre;
-        console.log(arrayAux);
         document.getElementById(idCeldaClickada).innerHTML = "<img src='" + asiganadir.foto + "' class='rounded dibujoHorario'>";
         addForm.reset();
         await updateDoc(alumnoRef, {
@@ -424,22 +481,55 @@ async function deleteAsignatura() {
     let diaSemana = getDiaHorario(numCol);
     let arrayAux = alumData[diaSemana];
     arrayAux[numFila] = "+";
-    console.log(arrayAux);
     await updateDoc(alumnoRef, {
         [diaSemana]: arrayAux
     });
     modalAdd.hide();
 }
 
-async function deleteEvento() {
-    let diaSemana = getDiaHorario(numCol);
-    let arrayAux = alumData[diaSemana];
-    arrayAux[numFila] = "+";
-    console.log(arrayAux);
-    await updateDoc(alumnoRef, {
-        [diaSemana]: arrayAux
+function getArrayCalendario(array) {
+    let arrayCal = array;
+    arrayCal.forEach((calEvent) => {
+        let eventoAux = arrayPictosCalendario.find(event => event.nombre == calEvent.title);
+        calEvent.image_url = eventoAux.foto.toString();
+        calEvent.start = calEvent.start.toDate();
     });
-    modalAdd.hide();
+    console.log(arrayCal);
+    return arrayCal;
+}
+
+async function addEventoCal(fechaclikada, contador) {
+    let seleccionado = document.querySelector("input[name='opcionCalendario']:checked");
+    let hora = 2 * contador;
+    if (seleccionado) {
+        let eventoAux = arrayPictosCalendario.find(event => event.nombre == seleccionado.value);
+        let eventoAdd = {
+            id: generarUID(),
+            title: eventoAux.nombre,
+            image_url: eventoAux.foto,
+            allDay: false,
+            start: new Date(fechaclikada.getFullYear(), fechaclikada.getMonth(), fechaclikada.getDate(), hora, 0),
+        };
+        arrayCalendario.push(eventoAdd);
+        await updateDoc(alumnoRef, {
+            calendario: arrayCalendario
+        });
+        calendar.addEvent(eventoAdd);
+        modalAdd.hide();
+    }
+}
+
+async function deleteEventoCal(eventId) {
+    console.log(eventId);
+    let indexDel = arrayCalendario.findIndex(evento => evento.id === eventId);
+    if (indexDel != -1) {
+        arrayCalendario.splice(indexDel, 1);
+        calendar.getEventById(eventId).remove();
+        await updateDoc(alumnoRef, {
+            calendario: arrayCalendario
+        })
+        modalAdd.hide();
+    }
 }
 
 crearTablaVacia(numHorasHorario);
@@ -483,36 +573,6 @@ function imprimirTablaDiaH() {
     tablaHorarioDia.style.display = "table";
 }
 
-btnDiaH.addEventListener("click", () => {
-    tablaHorarioSemana.style.display = "none";
-    btnDiaH.style.display = "none";
-    btnIzqDia.style.display = "block";
-    btnDerDia.style.display = "block";
-    btnSemanaH.style.display = "block";
-    diaSemana = new Date().getDay()
-    imprimirTablaDiaH(diaSemana);
-});
-
-btnSemanaH.addEventListener("click", () => {
-    tablaHorarioDia.style.display = "none";
-    tablaHorarioSemana.style.display = "table";
-    btnSemanaH.style.display = "none";
-    btnIzqDia.style.display = "none";
-    btnDerDia.style.display = "none";
-    btnDiaH.style.display = "block";
-});
-
-btnIzqDia.addEventListener("click", () => {
-    diaSemana--;
-    imprimirTablaDiaH(diaSemana);
-});
-
-btnDerDia.addEventListener("click", () => {
-    diaSemana++;
-    imprimirTablaDiaH(diaSemana);
-});
-
-
 function getDiaHorario(colnum) {
     let diaAux;
     switch (colnum) {
@@ -537,87 +597,112 @@ function getDiaHorario(colnum) {
 
 /*Calendario*/
 
-function renderizarCal() {
-    let calendar = new Calendar(calendario, {
-        plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, momentPlugin],
-        headerToolbar: {
-            start: 'prev',
-            center: 'title dayGridMonth,timeGridWeek,listMonth',
-            end: 'next'
-        },
-        buttonText: {
-            month: 'Mes',
-            week: 'Semana',
-            list: 'Agenda'
-        },
-        initialView: 'dayGridMonth',
-        handleWindowResize: true,
-        windowResizeDelay: 5,
-        showNonCurrentDates: false,
-        fixedWeekCount: false,
-        editable: false,
-        slotMinTime: "08:00:00",
-        contentHeight: "auto",
-        navLinks: true,
-        eventDurationEditable: false,
-        dayMaxEventRows: true,
-        views: {
-            dayGridMonth: {
-                dayMaxEventRows: 2,
-                stickyHeaderDates: false,
-                titleFormat: function () {
-                    let date = new Date();
-                    var options = {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    };
-                    return date.toLocaleDateString("es-ES", options);
-                }
-            },
-            listMonth: {
-                listDayFormat: {
+let calendar = new Calendar(calendario, {
+    plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, momentPlugin],
+    headerToolbar: {
+        start: 'prev',
+        center: 'title dayGridMonth,timeGridWeek,listMonth',
+        end: 'next'
+    },
+    buttonText: {
+        month: 'Mes',
+        week: 'Semana',
+        list: 'Agenda'
+    },
+    initialView: 'dayGridMonth',
+    handleWindowResize: true,
+    windowResizeDelay: 5,
+    showNonCurrentDates: false,
+    fixedWeekCount: false,
+    editable: false,
+    contentHeight: "auto",
+    navLinks: true,
+    eventDurationEditable: false,
+    dayMaxEventRows: true,
+    views: {
+        dayGridMonth: {
+            dayMaxEventRows: 2,
+            stickyHeaderDates: false,
+            titleFormat: function () {
+                let date = new Date();
+                var options = {
+                    weekday: 'long',
+                    year: 'numeric',
                     month: 'long',
-                    listDaySideFormat: false,
-                    day: 'numeric',
-                    weekday: 'long'
-                },
-                titleFormat: function () {
-                    let date = new Date();
-                    var options = {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    };
-                    return date.toLocaleDateString("es-ES", options);
-                }
+                    day: 'numeric'
+                };
+                return date.toLocaleDateString("es-ES", options);
             }
         },
-        slotDuration: "01:00:00",
-        height: "auto",
-        slotEventOverlap: false,
-        allDaySlot: false,
-        slotLabelFormat: {
-            hour: '2-digit',
-            minute: '2-digit',
-        },
-        moreLinkContent: function (arg) {
-            arg.text = "+" + arg.num;
-        },
-        events: getEventosCalendario,
-        eventClassNames: 'eventoCal',
-        defaultTimedEventDuration: '2:00',
-        dayHeaderFormat: {
-            weekday: 'short'
-        },
-        locale: esLocale
-    });
+        listMonth: {
+            stickyHeaderDates: false,
+            listDaySideFormat: false,
+            listDayFormat: {
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            },
+            titleFormat: function () {
+                let date = new Date();
+                var options = {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                };
+                return date.toLocaleDateString("es-ES", options);
+            }
+        }
+    },
+    slotDuration: "01:00:00",
+    height: "auto",
+    slotEventOverlap: false,
+    allDaySlot: false,
+    slotLabelFormat: {
+        hour: '2-digit',
+        minute: '2-digit',
+    },
+    moreLinkContent: function (arg) {
+        arg.text = "+" + arg.num;
+    },
+    eventContent: function (arg) {
+        let innerhtml = "";
+        if (arg.event.extendedProps.image_url) {
+            innerhtml += "<img src='" + arg.event.extendedProps.image_url + "' class='fc-event-img'>"
+        }
+        return {
+            html: innerhtml
+        };
+    },
+    eventClassNames: 'eventoCal',
+    eventClick: function (eventInfo) {
+        imprimirModalInterCalendario(eventInfo.event.id);
+        modalAdd.show();
+    },
+    dateClick: function (date) {
+        let fechaCalClickada = date.date;
+        let arrayEventos = calendar.getEvents();
+        let contadorEventos = 0;
+        arrayEventos.forEach((evento) => {
+            if (evento.start.getDate() == fechaCalClickada.getDate()) {
+                contadorEventos++;
+            }
+        });
+        imprimirModalAddCalendario(fechaCalClickada, contadorEventos);
+        modalAdd.show();
+    },
+    defaultTimedEventDuration: '2:00',
+    dayHeaderFormat: {
+        weekday: 'short'
+    },
+    locale: esLocale
+});;
+
+function renderizarCal() {
+    calendar.addEventSource(arrayCalendario);
     calendar.render();
 }
 
-function getEventosCalendario() {
-    let eventosArray = alumData.calendario;
-    return eventosArray;
+function generarUID() {
+    return Math.floor(Date.now() * Math.random() * 100).toString() + ((Math.random() + 1).toString(36).substring(3))
 }
