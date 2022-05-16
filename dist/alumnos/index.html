@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Agendiv</title>
-    <link rel="shortcut icon" href="#" />
+    <link rel="shortcut icon" href="./pictogramas/agenda3.ico" type="image/x-icon" />
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/style.css">
@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <div class="h-100 d-flex flex-column justify-content-between container-xl">
+    <div class="container-fluid contenedor">
         <div id="btnContainerTop" class="d-flex justify-content-between mt-3">
             <div class="mt-2 mb-2">
                 <button type="button" class="volver btn btnVolver btnSecundarios"><img
@@ -57,21 +57,21 @@
                 </ul>
             </div>
             <div>
-                <button type="button" id="logout" class="btn  btnRojo mt-3">Cerrar
-                    sesión</button>
+                <button type="button" id="logout" class="btn  btnRojo mt-3"><i
+                        class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</button>
             </div>
         </div>
         <div id="btnContainerMid">
-            <div class=" d-flex mt-3 flex-grow-1 flex-column flex-sm-row justify-content-around">
-                <div class="m-3">
+            <div class="row row-cols-1 row-cols-sm-2">
+                <div class="p-4 col">
                     <button type="button" id="btnHorario" class="btn btnIndex">
-                        <img src="./pictogramas/schedule.png" class="imgBtnIndex">
+                        <img src="./pictogramas/timetable.png" class="imgBtnIndex">
                         <p class="btnTitle">Horario</p>
                     </button>
                 </div>
-                <div class="m-3">
+                <div class="p-4 col">
                     <button type="button" id="btnCalendario" class="btn btnIndex">
-                        <img src="./pictogramas/calendar.png" class="imgBtnIndex">
+                        <img src="./pictogramas/calendario.png" class="imgBtnIndex">
                         <p class="btnTitle">Calendario</p>
                     </button>
                 </div>
@@ -79,11 +79,14 @@
         </div>
 
         <div id="horarioContainer">
-            <div class="d-flex flex-row mt-2 mb-4 align-items-center justify-content-center">
-                <button type="button" id="btnIzqDia" class="btn btnCambiarDia"></button>
-                <button type="button" id="btndiaH" class="btn btnVerde">Día</button>
-                <button type="button" id="btnsemanaH" class="btn btnVerde">Semana</button>
-                <button type="button" id="btnDerDia" class="btn btnCambiarDia">o</button>
+            <div class="d-flex flex-row mt-2 mb-3 align-items-center justify-content-center">
+                <button type="button" id="btnIzqDia" class="btn btnCambiarDia"><i
+                        class="fa-solid fa-circle-arrow-left"></i></button>
+                <button type="button" id="btndiaH" class="btn btnVerde"><i class="fa-solid fa-square-h"></i>Día</button>
+                <button type="button" id="btnsemanaH" class="btn btnVerde"><i
+                        class="fa-solid fa-table-columns"></i>Semana</button>
+                <button type="button" id="btnDerDia" class="btn btnCambiarDia"><i
+                        class="fa-solid fa-circle-arrow-right"></i></button>
             </div>
             <table id="tablaHorarioSemana" class="table tablaHorario"></table>
             <table id="tablaHorarioDia" class="table tablaHorario"></table>

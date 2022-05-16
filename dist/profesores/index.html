@@ -6,23 +6,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Agendiv-Profesores</title>
     <link rel="shortcut icon" href="#" />
-
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
-    <p>Hola</p>
-    <form id="uploadImgForm">
-        <div class="input-group mb-3">
-            <label for="formFile" class="input-group-text">Subir nuevo pictograma</label>
-            <input id="inputImage" class="form-control" type="file" accept="image/*" required>
+    <div id="modalAuth" class="modal" data-bs-backdrop="static" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="tituloModalAuth" class="modal-title"></h3>
+                </div>
+                <div id="contenidoModalAuth" class="modal-body">
+                    <form id="authForm"></form>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <button id="uploadCalendario" type="button" class="btn btnVerde">Subir imagen para Calendario</button>
-            <button id="uploadHorario" type="button" class="btn btnVerde">Subir imagen para Horario</button>
+    </div>
+    <div id="container" class="h-100 d-flex flex-column container-xl mt-5">
+        <div class="cabecera">
+            <button type="button" id="volver" class="btnVolver"><img src="./pictogramas/back.png"></button>
+            <h1 class="title"><i class="fas fa-school"></i>Profesores</h1>
+            <button type="button" id="logout" class="botonA btnRojo"><i class="fas fa-sign-out-alt"></i>Cerrar
+                sesión</button>
         </div>
-    </form>
+        <div id="btnContainer">
+            <div class="d-flex mt-3 flex-grow-1 flex-column flex-sm-row justify-content-around align-items-stretch">
+                <button type="button" id="btnEstudiantes" class="btn btnIndex m-3">
+                    <img src="./pictogramas/students.png">
+                    <p class="btnTitle">Gestión Estudiantes</p>
+                </button>
+                <button type="button" id="btnImagenes" class="btn btnIndex m-3">
+                    <img src="./pictogramas/picture.png">
+                    <p class="btnTitle">Gestión Actividades</p>
+                </button>
+            </div>
+        </div>
+        <div id="pictosContainer">
+            <form id="uploadImgForm">
+                <div class="input-group mb-3">
+                    <label for="formFile" class="input-group-text">Subir nuevo pictograma</label>
+                    <input id="inputImage" class="form-control" type="file" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <button id="uploadCalendario" type="button" class="btn btnVerde">Subir imagen para
+                        Calendario</button>
+                    <button id="uploadHorario" type="button" class="btn btnVerde">Subir imagen para Horario</button>
+                </div>
+            </form>
+        </div>
+        <div id="alumnosContainer"></div>
+        <div class="footer">
+            <button type="button" id="volver" class="btnVolver"><img src="./pictogramas/back.png"></button>
+        </div>
+    </div>
+
     <script src="profesores.js"></script>
 </body>
 

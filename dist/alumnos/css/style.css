@@ -20,10 +20,19 @@ body {
     font-size: var(--tamLetra);
     color: black;
     width: 100%;
+    background-color: var(--fondoApp);
 }
 
-body {
-    background-color: var(--fondoApp);
+i {
+    margin-right: 0.3rem;
+    font-weight: bolder;
+}
+
+.contenedor{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 /*Botones índice*/
@@ -33,6 +42,8 @@ body {
     border-radius: 10px;
     box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.35);
     font-size: 1.3em;
+    width: 100%;
+    height: 100%;
 }
 
 .btnIndex:hover,
@@ -43,8 +54,8 @@ body {
 
 .imgBtnIndex {
     display: block;
-    width: 40%;
-    margin: 0.5rem auto 0.5rem auto;
+    width: 45%;
+    margin: 0.5rem auto;
 }
 
 .btnTitle {
@@ -77,6 +88,11 @@ body {
     background-color: var(--fondoApp);
     opacity: 1;
     font-size: 1.2em;
+}
+
+.modal-body {
+    max-height: 80vh;
+    padding: 0.5em;
 }
 
 .modal-content {
@@ -124,10 +140,23 @@ form>.modal-footer {
 
 #addForm {
     overflow-y: auto;
-    max-height: 50vh;
+    max-height: 70vh;
+}
+
+.errorMessage {
+    color: red;
+    font-size: 0.8em;
+    margin-bottom: 0.75em;
 }
 
 /*Botones aceptar-rechazar*/
+.btnVerde, .btnRojo{
+    border-radius: 4px;
+    font-weight: bold;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.30);
+    font-size: 1.2em;
+}
+
 .btnVerde {
     border: 2.5px solid #2a8156;
     background-color: #d8f3e5;
@@ -162,19 +191,18 @@ form>.modal-footer {
 .tablaHorario tr {
     border: 3px solid var(--colorOscuro);
     font-size: 1.1em;
-    padding: 0.8rem;
     text-align: center;
     overflow: hidden;
     vertical-align: middle;
 }
 
-.tablaHorario th {
-    border-bottom: 4.5px solid var(--colorOscuro);
-    cursor: default;
+.tablaHorario th{
+    padding: 0.5em;
 }
 
 .tablaHorario td {
     height: 100px;
+    padding: 0.2em;
 }
 
 .celdaH {
@@ -208,6 +236,10 @@ form>.modal-footer {
     background-color: var(--colorViernes);
 }
 
+#horarioContainer{
+    display: none;
+}
+
 .dibujoHorario, .addHorario {
     display: block;
     margin: auto;
@@ -219,8 +251,6 @@ form>.modal-footer {
     cursor: pointer;
     display: block;
     margin: auto;
-    min-width: 70%;
-    max-width: 85%;
     height: auto;
     background-color: white;
 }
@@ -234,7 +264,32 @@ form>.modal-footer {
     display: none;
 }
 
-/*Modal Asignaturas*/
+#tablaHorarioDia {
+    width: 65%;
+    margin: auto;
+    border: 3px solid var(--colorOscuro);
+}
+
+#tablaHorarioDia td {
+    font-size: 1.3em;
+}
+
+#tablahorarioSemana .dibujoHorario {
+    min-width: 70%;
+    max-width: 85%;
+}
+
+#tablaHorarioDia .dibujoHorario {
+    min-width: 0;
+    max-width: 50%;
+}
+
+.tablaHorario th.miercoles{
+    padding: 0.5em 0.3em;
+    font-size: 0.95em;
+}
+
+/*Modal Asignaturas/Eventos*/
 
 .dibujo-cc {
     cursor: pointer;
@@ -266,6 +321,50 @@ form>.modal-footer {
     width: 85%;
     cursor: pointer;
     vertical-align: middle;
+}
+
+input[type=radio]:checked+.imgLabel,
+input[type=radio]:active+.imgLabel {
+    border-color: red;
+}
+
+.btnCambiarDia, #btnsemanaH {
+    display: none;
+}
+
+.btnCambiarDia {
+    font-size: 2em;
+    color: var(--fondoApp);
+    background-color: #2C3E50;
+    padding: 0 0.5rem;
+    margin: 0 2rem;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.btnCambiarDia:hover {
+    color: white;
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
+    background-color: #1E2B37;
+    border-color: #1E2B37
+}
+
+.btnCambiarDia>i {
+    margin: 0;
+}
+
+.dibujoInput>input[type="radio"] {
+    margin: 0 0.5em;
+}
+
+.scrollBtnDown, .scrollBtnUp{
+    font-size: 1.25em;
+    color: var(--fondoApp);
+    background-color: #2C3E50;
+    border: 1px solid #2C3E50;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    width: 35%;
+    padding: 0.1em;
+    margin: 0.3em;
 }
 
 /*Calendario*/
@@ -352,8 +451,9 @@ form>.modal-footer {
 }
 
 .fc .fc-daygrid-day.fc-day-today {
-    border: 4px solid var(--colorOscuro);
+    border: 4px solid #0049FF;
     font-weight: bold;
+    background-color: var(--fondoApp);
 }
 
 .fc .fc-toolbar-chunk:nth-child(2) {
@@ -381,22 +481,10 @@ form>.modal-footer {
     border-radius: 5px;
 }
 
-@media (max-width: 600px) {
-    .fc .fc-button-group {
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .fc .fc-button-group>.fc-button {
-        width: 90%;
-        margin: 0.3rem auto;
-    }
-}
-
 .eventoCal {
     background-color: white;
     border: 2px solid var(--colorOscuro);
-    margin-bottom: 0.3em;
+    margin-top: 0.3em;
 }
 
 .fc-event-img {
@@ -409,16 +497,23 @@ form>.modal-footer {
 
 .fc-event-main>.fc-event-img {
     width: auto;
-    max-width: 95%;
     display: block;
+    width: 95%;
     height: 100%;
     padding: 0.2em;
     margin: auto;
 }
 
-.fc-event-main {
+.fc .fc-event-main {
+    background-color: white;
     height: auto;
     overflow: hidden;
+    border: 2px solid black;
+}
+
+.fc .fc-event-main:hover,
+.fc .fc-event-main:click{
+    background: rgba(0, 0, 0, 0.2)
 }
 
 tr>.fc-timegrid-slot-label,
@@ -435,15 +530,17 @@ tr>.fc-list-event-graphic {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-.fc .fc-event-main:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
 .fc-timegrid-slots .fc-timegrid-slot {
     border: 0 !important;
 }
 
-@media (max-width:550px) {
+a.fc-timegrid-event{
+    border:none;
+
+}
+
+/*Media queries*/
+@media (max-width:600px) {
     .cabeceraH span {
         display: none;
     }
@@ -457,12 +554,21 @@ tr>.fc-list-event-graphic {
     }
 
     #tablaHorarioSemana .dibujoHorario {
-        width: 95%;
-        max-width: 100%;
+        width: 100%;
     }
 
     body {
         font-size: 1rem;
+    }
+
+    .fc .fc-button-group {
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .fc .fc-button-group>.fc-button {
+        width: 90%;
+        margin: 0.3rem auto;
     }
 }
 
@@ -471,13 +577,15 @@ tr>.fc-list-event-graphic {
         width: 75%;
     }
 
+    #tablaHorarioSemana .celdaH {
+        padding: 5px;
+    }
+
+    #tablaHorarioSemana .dibujoHorario {
+        width: 100%;
+    }
+
     body {
         font-size: 1.1rem;
-    }
-}
-
-@media (min-width:825px) {
-    #tablaHorarioDia .dibujoHorario {
-        max-width: 50%;
     }
 }

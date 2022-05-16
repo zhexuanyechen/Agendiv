@@ -194,10 +194,10 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /*!***************************!*\
   !*** ./src/profesores.js ***!
   \***************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! firebase/app */ \"./node_modules/firebase/app/dist/index.esm.js\");\n/* harmony import */ var firebase_firestore__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! firebase/firestore */ \"./node_modules/firebase/firestore/dist/index.esm.js\");\n/* harmony import */ var firebase_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! firebase/auth */ \"./node_modules/firebase/auth/dist/index.esm.js\");\n/* harmony import */ var bootstrap_js_dist_modal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bootstrap/js/dist/modal */ \"./node_modules/bootstrap/js/dist/modal.js\");\n/* harmony import */ var bootstrap_js_dist_modal__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(bootstrap_js_dist_modal__WEBPACK_IMPORTED_MODULE_3__);\n/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! firebase/storage */ \"./node_modules/firebase/storage/dist/index.esm.js\");\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nconst firebaseConfig = {\r\n    apiKey: \"AIzaSyAeFEDqLmHUdmHUXSbfpGfWwWtnGsBHuN4\",\r\n    authDomain: \"agendiv-atenpace-e8772.firebaseapp.com\",\r\n    projectId: \"agendiv-atenpace-e8772\",\r\n    storageBucket: \"agendiv-atenpace-e8772.appspot.com\",\r\n    messagingSenderId: \"977931153855\",\r\n    appId: \"1:977931153855:web:7773aab366f14dda2f310a\",\r\n    measurementId: \"G-RVZR9GHSX9\"\r\n};\r\n\r\nconst app = (0,firebase_app__WEBPACK_IMPORTED_MODULE_0__.initializeApp)(firebaseConfig);\r\nconst storage = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.getStorage)(app);\r\nconst db = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.getFirestore)(app);\r\n\r\nconst uploadImgForm = document.getElementById(\"uploadImgForm\");\r\nconst inputImage = document.getElementById(\"inputImage\");\r\nconst btnUploadCalendario = document.getElementById(\"uploadCalendario\");\r\nconst btnUploadHorario = document.getElementById(\"uploadHorario\");\r\nconst pictosHorCollectionRef = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(db, 'pictosHorario');\r\n\r\ninputImage.addEventListener(\"change\", checkInputImage, false);\r\n\r\nfunction checkInputImage() {\r\n    let files = this.files;\r\n    let fileName = files[0].name;\r\n    let extFile = fileName.split(\".\").pop();\r\n    if (extFile === \"jpg\" || extFile === \"jpeg\" || extFile === \"png\") {\r\n        console.log(\"Extensión correcta.\");\r\n    } else {\r\n        alert(\"solo pueden subirse imágenes en formato .jpg, .jpeg, .png.\");\r\n    }\r\n}\r\n/*Pictogramas */\r\n\r\nasync function uploadInputImageHorario() {\r\n    if (inputImage.files.length !== 0) {\r\n        let image = inputImage.files[0];\r\n        let imageName = image.name;\r\n        const pictosHorarioRef = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.ref)(storage, '/pictosHorario/' + imageName);\r\n        uploadImage(pictosHorarioRef).then((imgUrl) => {\r\n            (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.addDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(db, 'pictosHorario'), {\r\n                nombre: imageName.split(\".\", 1)[0],\r\n                foto: imgUrl,\r\n                audio: \"prueba\"\r\n            }).then(() => {\r\n                console.log('Se ha subido el pictograma ' + imageName + ' a la base de datos.');\r\n            }).catch((error => {\r\n                console.log(error);\r\n            }));\r\n        })\r\n    }\r\n}\r\n\r\nasync function uploadInputImageCalendario() {\r\n    if (inputImage.files.length !== 0) {\r\n        let image = inputImage.files[0];\r\n        let imageName = image.name;\r\n        const pictosCalRef = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.ref)(storage, '/pictosCalendario/' + imageName);\r\n        uploadImage(pictosCalRef).then((imgUrl) => {\r\n            (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.addDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(db, 'pictosCalendario'), {\r\n                nombre: imageName.split(\".\", 1)[0],\r\n                foto: imgUrl,\r\n                audio: \"prueba\"\r\n            }).then(() => {\r\n                console.log('Se ha subido el pictograma ' + imageName + ' a la base de datos.');\r\n            }).catch((error => {\r\n                console.log(error);\r\n            }));\r\n        })\r\n    }\r\n}\r\n\r\nfunction uploadImage(pathRef) {\r\n    const pictosHorarioRef = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.ref)(storage, pathRef);\r\n    const uploadImage = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.uploadBytesResumable)(pictosHorarioRef, inputImage.files[0]);\r\n\r\n    return new Promise((resolve, reject) => {\r\n        uploadImage.on('state_changed', (snapshot) => {\r\n            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;\r\n            console.log('Upload is ' + progress + '% done');\r\n            switch (snapshot.state) {\r\n                case 'paused':\r\n                    console.log('Upload is paused');\r\n                    break;\r\n                case 'running':\r\n                    console.log('Upload is running');\r\n                    break;\r\n            }\r\n        }, (error) => {\r\n            console.log(error);\r\n            reject(error);\r\n        }, async () => {\r\n            const imgURL = await (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.getDownloadURL)(uploadImage.snapshot.ref);\r\n            console.log(imgURL);\r\n            resolve(imgURL); //Devuelve la url como un thenable\r\n        });\r\n    });\r\n}\r\n\r\nbtnUploadHorario.addEventListener(\"click\", uploadInputImageHorario, false);\r\n\r\nbtnUploadCalendario.addEventListener(\"click\", uploadInputImageCalendario, false);\n\n//# sourceURL=webpack://agendiv-prueba/./src/profesores.js?");
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! firebase/app */ \"./node_modules/firebase/app/dist/index.esm.js\");\n/* harmony import */ var firebase_firestore__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! firebase/firestore */ \"./node_modules/firebase/firestore/dist/index.esm.js\");\n/* harmony import */ var firebase_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! firebase/auth */ \"./node_modules/firebase/auth/dist/index.esm.js\");\n/* harmony import */ var bootstrap_js_dist_modal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bootstrap/js/dist/modal */ \"./node_modules/bootstrap/js/dist/modal.js\");\n/* harmony import */ var bootstrap_js_dist_modal__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(bootstrap_js_dist_modal__WEBPACK_IMPORTED_MODULE_3__);\n/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! firebase/storage */ \"./node_modules/firebase/storage/dist/index.esm.js\");\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nconst firebaseConfig = {\r\n    apiKey: \"AIzaSyAeFEDqLmHUdmHUXSbfpGfWwWtnGsBHuN4\",\r\n    authDomain: \"agendiv-atenpace-e8772.firebaseapp.com\",\r\n    projectId: \"agendiv-atenpace-e8772\",\r\n    storageBucket: \"agendiv-atenpace-e8772.appspot.com\",\r\n    messagingSenderId: \"977931153855\",\r\n    appId: \"1:977931153855:web:7773aab366f14dda2f310a\",\r\n    measurementId: \"G-RVZR9GHSX9\"\r\n};\r\n\r\nconst app = (0,firebase_app__WEBPACK_IMPORTED_MODULE_0__.initializeApp)(firebaseConfig);\r\nconst storage = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.getStorage)(app);\r\nconst db = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.getFirestore)(app);\r\n\r\n/**Modales */\r\nconst modalAuth = new (bootstrap_js_dist_modal__WEBPACK_IMPORTED_MODULE_3___default())(document.getElementById(\"modalAuth\"));\r\nconst tituloModalAuth = document.getElementById(\"tituloModalAuth\");\r\nconst authForm = document.getElementById(\"authForm\");\r\nconst modalAdd = new (bootstrap_js_dist_modal__WEBPACK_IMPORTED_MODULE_3___default())(document.getElementById(\"modalAdd\"));\r\nconst tituloModalAdd = document.getElementById(\"tituloModalAdd\");\r\nconst contenidoModalAdd = document.getElementById(\"contenidoModalAdd\");\r\n\r\nconst uploadImgForm = document.getElementById(\"uploadImgForm\");\r\nconst inputImage = document.getElementById(\"inputImage\");\r\nconst btnUploadCalendario = document.getElementById(\"uploadCalendario\");\r\nconst btnUploadHorario = document.getElementById(\"uploadHorario\");\r\nconst pictosHorCollectionRef = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(db, 'pictosHorario');\r\n\r\nconst pictosHorarioSnapshot = await (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(db, \"pictosHorario\"));\r\nconst pictosCalendarioSnapshot = await (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(db, \"pictosCalendario\"));\r\n\r\ninputImage.addEventListener(\"change\", checkInputImage, false);\r\n\r\nlet unsubscribe;\r\n\r\n(0,firebase_auth__WEBPACK_IMPORTED_MODULE_2__.onAuthStateChanged)(auth, (usuario) => {\r\n    if (usuario) {\r\n        userId = usuario.uid;\r\n        alumnoRef = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.doc)(db, \"alumnos\", userId);\r\n        modalAuth.hide();\r\n        unsubscribe = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.onSnapshot)(alumnoRef,\r\n            (doc) => {\r\n                alumData = doc.data();\r\n                arrayCalendario = getArrayCalendario(alumData.calendario);\r\n                getHorario(alumData);\r\n            }, (error) => {\r\n                console.log(error.message);\r\n            });\r\n    } else {\r\n        imprimirLoginForm();\r\n        modalAuth.show();\r\n    }\r\n});\r\n\r\nlogoutButton.addEventListener('click', () => {\r\n    (0,firebase_auth__WEBPACK_IMPORTED_MODULE_2__.signOut)(auth)\r\n        .then(() => {\r\n            console.log('user signed out');\r\n            imprimirLoginForm();\r\n            modalAuth.show();\r\n        })\r\n        .catch(err => {\r\n            console.log(err.message)\r\n        })\r\n});\r\n\r\nfunction login() {\r\n    let usuario = document.getElementById(\"usuario\").value;\r\n    let pwd = document.getElementById(\"pwd\").value;\r\n    let errorMessage = document.querySelector(\".errorMessage\");\r\n\r\n    (0,firebase_auth__WEBPACK_IMPORTED_MODULE_2__.signInWithEmailAndPassword)(auth, usuario, pwd)\r\n        .then(cred => {\r\n            userId = cred.user.uid;\r\n            authForm.reset();\r\n            modalAuth.hide();\r\n        }).catch(err => {\r\n            console.log(err.message);\r\n            errorMessage.innerText = err.message;\r\n        })\r\n}\r\n\r\nfunction imprimirLoginForm() {\r\n    authForm.innerHTML = `\r\n        <div class=\"mb-2 form-group\">\r\n            <label for=\"usuario\" class=\"form-label\">Correo electrónico</label>\r\n            <input type=\"text\" class=\"form-control\" placeholder=\"Correo electrónico\" id=\"usuario\" required>\r\n        </div>\r\n        <div class=\"mb-2 form-group\">\r\n            <label for=\"pwd\" class=\"form-label\">Contraseña</label>\r\n            <input type=\"text\" class=\"form-control\" placeholder=\"Contraseña\" id=\"pwd\" required>\r\n        </div>\r\n        <div class=\"modal-footer row align-items-start\">\r\n            <p id=\"enlaceaSignup\" class=\"col-md-5\" tabindex=\"0\">No tienes cuenta? Registrate aqui.</p>\r\n            <button type=\"button\" id=\"login\" class=\"botonA btnVerde col-md-5\">Inicio\r\n              sesión</button>\r\n        </div>\r\n        <p class=\"errorMessage text-center\"></p>`;\r\n    tituloModalAuth.innerText = \"Iniciar Sesión\";\r\n    document.getElementById(\"enlaceaSignup\").addEventListener(\"click\", imprimirSignupForm);\r\n    document.getElementById(\"login\").addEventListener(\"click\", login);\r\n}\r\n\r\nfunction checkInputImage() {\r\n    let files = this.files;\r\n    let fileName = files[0].name;\r\n    let extFile = fileName.split(\".\").pop();\r\n    if (extFile === \"jpg\" || extFile === \"jpeg\" || extFile === \"png\") {\r\n        console.log(\"Extensión correcta.\");\r\n    } else {\r\n        alert(\"solo pueden subirse imágenes en formato .jpg, .jpeg, .png.\");\r\n    }\r\n}\r\n\r\n/*Pictogramas */\r\nasync function uploadInputImageHorario() {\r\n    if (inputImage.files.length !== 0) {\r\n        let image = inputImage.files[0];\r\n        let imageName = image.name;\r\n        const pictosHorarioRef = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.ref)(storage, '/pictosHorario/' + imageName);\r\n        uploadImage(pictosHorarioRef).then((imgUrl) => {\r\n            (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.addDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(db, 'pictosHorario'), {\r\n                nombre: imageName.split(\".\", 1)[0],\r\n                foto: imgUrl,\r\n                audio: \"prueba\"\r\n            }).then(() => {\r\n                console.log('Se ha subido el pictograma ' + imageName + ' a la base de datos.');\r\n            }).catch((error => {\r\n                console.log(error);\r\n            }));\r\n        })\r\n    }\r\n}\r\n\r\nasync function uploadInputImageCalendario() {\r\n    if (inputImage.files.length !== 0) {\r\n        let image = inputImage.files[0];\r\n        let imageName = image.name;\r\n        const pictosCalRef = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.ref)(storage, '/pictosCalendario/' + imageName);\r\n        uploadImage(pictosCalRef).then((imgUrl) => {\r\n            (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.addDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(db, 'pictosCalendario'), {\r\n                nombre: imageName.split(\".\", 1)[0],\r\n                foto: imgUrl,\r\n                audio: \"prueba\"\r\n            }).then(() => {\r\n                console.log('Se ha subido el pictograma ' + imageName + ' a la base de datos.');\r\n            }).catch((error => {\r\n                console.log(error);\r\n            }));\r\n        })\r\n    }\r\n}\r\n\r\nfunction uploadImage(pathRef) {\r\n    const pictosHorarioRef = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.ref)(storage, pathRef);\r\n    const uploadImage = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.uploadBytesResumable)(pictosHorarioRef, inputImage.files[0]);\r\n\r\n    return new Promise((resolve, reject) => {\r\n        uploadImage.on('state_changed', (snapshot) => {\r\n            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;\r\n            console.log('Upload is ' + progress + '% done');\r\n            switch (snapshot.state) {\r\n                case 'paused':\r\n                    console.log('Upload is paused');\r\n                    break;\r\n                case 'running':\r\n                    console.log('Upload is running');\r\n                    break;\r\n            }\r\n        }, (error) => {\r\n            console.log(error);\r\n            reject(error);\r\n        }, async () => {\r\n            const imgURL = await (0,firebase_storage__WEBPACK_IMPORTED_MODULE_4__.getDownloadURL)(uploadImage.snapshot.ref);\r\n            console.log(imgURL);\r\n            resolve(imgURL); //Devuelve la url como un thenable\r\n        });\r\n    });\r\n}\r\n\r\nbtnUploadHorario.addEventListener(\"click\", uploadInputImageHorario, false);\r\n\r\nbtnUploadCalendario.addEventListener(\"click\", uploadInputImageCalendario, false);\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } }, 1);\n\n//# sourceURL=webpack://agendiv-prueba/./src/profesores.js?");
 
 /***/ }),
 
@@ -261,6 +261,88 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/async module */
+/******/ 	(() => {
+/******/ 		var webpackThen = typeof Symbol === "function" ? Symbol("webpack then") : "__webpack_then__";
+/******/ 		var webpackExports = typeof Symbol === "function" ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 		var webpackError = typeof Symbol === "function" ? Symbol("webpack error") : "__webpack_error__";
+/******/ 		var completeQueue = (queue) => {
+/******/ 			if(queue) {
+/******/ 				queue.forEach((fn) => (fn.r--));
+/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
+/******/ 			}
+/******/ 		}
+/******/ 		var completeFunction = (fn) => (!--fn.r && fn());
+/******/ 		var queueFunction = (queue, fn) => (queue ? queue.push(fn) : completeFunction(fn));
+/******/ 		var wrapDeps = (deps) => (deps.map((dep) => {
+/******/ 			if(dep !== null && typeof dep === "object") {
+/******/ 				if(dep[webpackThen]) return dep;
+/******/ 				if(dep.then) {
+/******/ 					var queue = [];
+/******/ 					dep.then((r) => {
+/******/ 						obj[webpackExports] = r;
+/******/ 						completeQueue(queue);
+/******/ 						queue = 0;
+/******/ 					}, (e) => {
+/******/ 						obj[webpackError] = e;
+/******/ 						completeQueue(queue);
+/******/ 						queue = 0;
+/******/ 					});
+/******/ 					var obj = {};
+/******/ 					obj[webpackThen] = (fn, reject) => (queueFunction(queue, fn), dep['catch'](reject));
+/******/ 					return obj;
+/******/ 				}
+/******/ 			}
+/******/ 			var ret = {};
+/******/ 			ret[webpackThen] = (fn) => (completeFunction(fn));
+/******/ 			ret[webpackExports] = dep;
+/******/ 			return ret;
+/******/ 		}));
+/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
+/******/ 			var queue = hasAwait && [];
+/******/ 			var exports = module.exports;
+/******/ 			var currentDeps;
+/******/ 			var outerResolve;
+/******/ 			var reject;
+/******/ 			var isEvaluating = true;
+/******/ 			var nested = false;
+/******/ 			var whenAll = (deps, onResolve, onReject) => {
+/******/ 				if (nested) return;
+/******/ 				nested = true;
+/******/ 				onResolve.r += deps.length;
+/******/ 				deps.map((dep, i) => (dep[webpackThen](onResolve, onReject)));
+/******/ 				nested = false;
+/******/ 			};
+/******/ 			var promise = new Promise((resolve, rej) => {
+/******/ 				reject = rej;
+/******/ 				outerResolve = () => (resolve(exports), completeQueue(queue), queue = 0);
+/******/ 			});
+/******/ 			promise[webpackExports] = exports;
+/******/ 			promise[webpackThen] = (fn, rejectFn) => {
+/******/ 				if (isEvaluating) { return completeFunction(fn); }
+/******/ 				if (currentDeps) whenAll(currentDeps, fn, rejectFn);
+/******/ 				queueFunction(queue, fn);
+/******/ 				promise['catch'](rejectFn);
+/******/ 			};
+/******/ 			module.exports = promise;
+/******/ 			body((deps) => {
+/******/ 				currentDeps = wrapDeps(deps);
+/******/ 				var fn;
+/******/ 				var getResult = () => (currentDeps.map((d) => {
+/******/ 					if(d[webpackError]) throw d[webpackError];
+/******/ 					return d[webpackExports];
+/******/ 				}))
+/******/ 				var promise = new Promise((resolve, reject) => {
+/******/ 					fn = () => (resolve(getResult));
+/******/ 					fn.r = 0;
+/******/ 					whenAll(currentDeps, fn, reject);
+/******/ 				});
+/******/ 				return fn.r ? promise : getResult();
+/******/ 			}, (err) => (err && reject(promise[webpackError] = err), outerResolve()));
+/******/ 			isEvaluating = false;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules

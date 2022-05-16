@@ -317,7 +317,7 @@ function anadirColumnas() {
             <th scope="col" class="horasAjuste">H<span>orario</span></th>
             <th scope="col">L<span>unes</span></th>
             <th scope="col">Ma<span>rtes</span></th>
-            <th scope="col">Mi<span>ércoles</span></th>
+            <th scope="col" class='miercoles'>Mi<span>ércoles</span></th>
             <th scope="col">J<span>ueves</span></th>
             <th scope="col">V<span>iernes</span></th>
         </tr>`;
@@ -396,18 +396,18 @@ function imprimirModalAdd(text, addBtnFun, carga) {
     contenidoModalAdd.innerHTML = "";
     tituloModalAdd.innerText = "Qué quieres poner?";
     let btnScrollDiv = document.createElement("div");
-    btnScrollDiv.classList.add("btnScroll");
+    btnScrollDiv.classList.add("btnScroll", "d-flex", "flex-row", "justify-content-around");
     let btnScrollUp = document.createElement("button");
     btnScrollUp.classList.add("btn", "scrollBtnUp");
-    btnScrollUp.innerHTML = `<i class="far fa-arrow-alt-circle-up"></i>`
+    btnScrollUp.innerHTML = `<i class="far fa-arrow-alt-circle-up"></i>Subir`
     let btnScrollDown = document.createElement("button");
     btnScrollDown.classList.add("btn", "scrollBtnDown");
-    btnScrollDown.innerHTML = `<i class="far fa-arrow-alt-circle-down"></i>`;
+    btnScrollDown.innerHTML = `<i class="far fa-arrow-alt-circle-down"></i>Bajar`;
     btnScrollDiv.append(btnScrollDown, btnScrollUp);
     let btnScrollDivClone = btnScrollDiv.cloneNode(true);
     let addForm = document.createElement("form");
     addForm.id = "addForm";
-    addForm.classList.add("row", "row-cols-2", "justify-content-around")
+    addForm.classList.add("row", "row-cols-2", "justify-content-around", "gy-1")
     contenidoModalAdd.append(btnScrollDiv, addForm, btnScrollDivClone);
     carga();
     let btnModalDiv = document.createElement("div");

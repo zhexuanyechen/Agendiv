@@ -16,13 +16,11 @@
 
 html,
 body {
-    min-height: 100%;
+    height: 100vh;
     font-size: var(--tamLetra);
     color: black;
     width: 100%;
-}
-
-body {
+    font-family: 'Short Stack', cursive;
     background-color: var(--fondoApp);
 }
 
@@ -123,6 +121,13 @@ form>.modal-footer {
 }
 
 /*Botones aceptar-rechazar*/
+.btnVerde, .btnRojo{
+    border-radius: 4px;
+    font-weight: bold;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.30);
+    font-size: 1.2em;
+}
+
 .btnVerde {
     border: 2.5px solid #2a8156;
     background-color: #d8f3e5;
