@@ -93,6 +93,8 @@ const pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
 const pictosCalendarioSnapshot = await getDocs(collection(db, "pictosCalendario"));
 let numHorasHorario = ajustes.data().numHoras;
 
+modalAuth.show();
+
 onAuthStateChanged(auth, (usuario) => {
     if (usuario) {
         userId = usuario.uid;
@@ -199,8 +201,8 @@ function imprimirLoginForm() {
             <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
         </div>
         <div class="modal-footer row align-items-start">
-            <p id="enlaceaSignup" class="col-md-5" tabindex="0">No tienes cuenta? Registrate aqui.</p>
-            <button type="button" id="login" class="botonA btnVerde col-md-5">Inicio
+            <p id="enlaceaSignup" class="col-md-5" tabindex="0">No tienes cuenta? Registrate aquí</p>
+            <button type="button" id="login" class="botonA btnVerde col-md-5"><i class="fa-solid fa-right-to-bracket"></i>Inicio
               sesión</button>
         </div>
         <p class="errorMessage text-center"></p>`;
@@ -261,25 +263,25 @@ function imprimirSignupForm() {
     authForm.innerHTML = `
         <div class="mb-2 form-group row gx-3">
             <div class="col-6">
-              <label for="nombre" class="form-label">Nombre</label>
+              <label for="nombre" class="form-label"><i class="fa-regular fa-id-card"></i>Nombre</label>
               <input type="text" class="form-control" placeholder="Nombre" id="nombre" required>
             </div>
             <div class="col-6">
-              <label for="apellidos" class="form-label">Apellidos</label>
+              <label for="apellidos" class="form-label"><i class="fa-solid fa-id-card"></i>Apellidos</label>
               <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" required>
             </div>
         </div>
         <div class="mb-2 form-group">
-            <label for="usuario" class="form-label">Correo electrónico</label>
+            <label for="usuario" class="form-label"><i class="fa-solid fa-at"></i>Correo electrónico</label>
             <input type="text" class="form-control" placeholder="Correo electrónico" id="usuario" required>
         </div>
         <div class="mb-2 form-group">
-            <label for="pwd" class="form-label">Contraseña</label>
+            <label for="pwd" class="form-label"><i class="fa-solid fa-lock"></i>Contraseña</label>
             <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
         </div>
         <div class="modal-footer row align-items-stretch justify-content-around">
-            <button type="button" id="cancelarSignup" class="botonA btnRojo col-md-5">Cancelar</button>
-            <button type="button" id="signup" class="botonA btnVerde col-md-5">Registrarse</button>
+            <button type="button" id="cancelarSignup" class="botonA btnRojo col-md-5"><i class="fa-solid fa-xmark"></i>Cancelar</button>
+            <button type="button" id="signup" class="botonA btnVerde col-md-5"><i class="fa-solid fa-user-plus"></i>Registrarse</button>
         </div>
         <p class="errorMessage text-center"></p>`;
     tituloModalAuth.innerText = "Registrarse";
