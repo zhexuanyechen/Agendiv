@@ -5,9 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Agendiv-Profesores</title>
-    <link rel="shortcut icon" href="#" />
+    <link rel="shortcut icon" href="./pictogramas/agenda3.ico" type="image/x-icon" />
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
+    <script src="https://kit.fontawesome.com/0232fc32b2.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -23,41 +24,91 @@
             </div>
         </div>
     </div>
-    <div id="container" class="h-100 d-flex flex-column container-xl mt-5">
+    <div id="modalEditar" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="tituloModalEditar" class="modal-title"></h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div id="contenidoModalEditar" class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="container" class="container-lg contenedor mt-4">
         <div class="cabecera">
-            <button type="button" id="volver" class="btnVolver"><img src="./pictogramas/back.png"></button>
-            <h1 class="title"><i class="fas fa-school"></i>Profesores</h1>
+            <button type="button" class="btnVolver"><img src="./pictogramas/back.png"></button>
+            <h1 class="firstTitle"><i class="fas fa-school"></i>Profesores</h1>
             <button type="button" id="logout" class="botonA btnRojo"><i class="fas fa-sign-out-alt"></i>Cerrar
                 sesión</button>
         </div>
         <div id="btnContainer">
-            <div class="d-flex mt-3 flex-grow-1 flex-column flex-sm-row justify-content-around align-items-stretch">
-                <button type="button" id="btnEstudiantes" class="btn btnIndex m-3">
-                    <img src="./pictogramas/students.png">
-                    <p class="btnTitle">Gestión Estudiantes</p>
-                </button>
-                <button type="button" id="btnImagenes" class="btn btnIndex m-3">
-                    <img src="./pictogramas/picture.png">
-                    <p class="btnTitle">Gestión Actividades</p>
-                </button>
+            <div class="row row-cols-1 row-cols-md-2">
+                <div class="p-4 col">
+                    <button type="button" id="btnEstudiantes" class="btn btnIndex">
+                        <img class="imgBtnIndex" src="./pictogramas/students.png">
+                        <p>Gestión Estudiantes</p>
+                    </button>
+                </div>
+                <div class="p-4 col">
+                    <button type="button" id="btnImagenes" class="btn btnIndex">
+                        <img class="imgBtnIndex" src="./pictogramas/pictograms.png">
+                        <p>Gestión Actividades</p>
+                    </button>
+                </div>
             </div>
         </div>
         <div id="pictosContainer">
+            <h2><i class="fa-solid fa-icons"></i>Gestión de Pictogramas</h2>
+            <div id="btnPictos" class="row row-cols-1 row-cols-md-3">
+                <div class="p-4 col">
+                    <button type="button" id="btnPictoHorario" class="btn btnIndex">
+                        <img class="imgBtnIndex" src="./pictogramas/timetable.png">
+                        <p>Pictogramas Horario</p>
+                    </button>
+                </div>
+                <div class="p-4 col">
+                    <button type="button" id="btnPictoCal" class="btn btnIndex">
+                        <img class="imgBtnIndex" src="./pictogramas/calendario.png">
+                        <p>Pictogramas Calendario</p>
+                    </button>
+                </div>
+                <div class="p-4 col">
+                    <button type="button" id="btnUploadPictos" class="btn btnIndex">
+                        <img class="imgBtnIndex" src="./pictogramas/uploadPicto.png">
+                        <p>Subir pictograma</p>
+                    </button>
+                </div>
+            </div>
+
             <form id="uploadImgForm">
+                <h3>Subir nuevo pictograma</h3>
+                <p class="aviso">Es importante no subir un pictograma repetido.</p>
                 <div class="input-group mb-3">
                     <label for="formFile" class="input-group-text">Subir nuevo pictograma</label>
                     <input id="inputImage" class="form-control" type="file" accept="image/*" required>
                 </div>
-                <div class="mb-3">
-                    <button id="uploadCalendario" type="button" class="btn btnVerde">Subir imagen para
+                <div class="mb-3 d-flex justify-content-end">
+                    <button id="uploadCalendario" type="button" class="btn btnVerde me-2"><i
+                            class="fa-solid fa-calendar-days"></i>Subir imagen para
                         Calendario</button>
-                    <button id="uploadHorario" type="button" class="btn btnVerde">Subir imagen para Horario</button>
+                    <button id="uploadHorario" type="button" class="btn btnVerde"><i
+                            class="fa-solid fa-table-columns"></i>Subir imagen para Horario</button>
                 </div>
             </form>
+            <div id="listaPictosHor" class="lista"></div>
+            <div id="listaPictosCal" class="lista"></div>
         </div>
-        <div id="alumnosContainer"></div>
+        <div id="alumnosContainer">
+            <h2><i class="fa-solid fa-graduation-cap"></i>Gestión de Alumnos</h2>
+            <button type="button" class="btn btnVerde btnHoras"><i class="fa-solid fa-clock"></i>Editar horas
+                horario</button>
+            <div id="listaAlumnos" class="lista"></div>
+        </div>
         <div class="footer">
-            <button type="button" id="volver" class="btnVolver"><img src="./pictogramas/back.png"></button>
+            <button type="button" class="btnVolver"><img src="./pictogramas/back.png"></button>
         </div>
     </div>
 

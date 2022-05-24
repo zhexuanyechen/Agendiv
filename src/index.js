@@ -88,12 +88,42 @@ let arrayPictosCalendario = [];
 
 let idCeldaClickada, numFila, numCol;
 
-let ajustes = await getDoc(doc(db, "ajustes", "generales"));
-const pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
-const pictosCalendarioSnapshot = await getDocs(collection(db, "pictosCalendario"));
-let numHorasHorario = ajustes.data().numHoras;
-
 modalAuth.show();
+
+let pictosHorarioSnapshot, pictosCalendarioSnapshot, ajustes;
+
+window.addEventListener('load', async () => {
+    try {
+        ajustes = await getDoc(doc(db, "ajustes", "generales"));
+        pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
+        pictosCalendarioSnapshot = await getDocs(collection(db, "pictosCalendario"));
+        pictosHorarioSnapshot.forEach((doc) => {
+            let pictoData = doc.data();
+            pictoData.id = doc.id;
+            arrayPictosHorario.push(pictoData);
+        });
+
+        pictosCalendarioSnapshot.forEach((doc) => {
+            let pictoData = doc.data();
+            pictoData.id = doc.id;
+            arrayPictosCalendario.push(pictoData);
+        });
+        console.log('Inicialización terminada');
+    } catch (e) {
+        console.log(e);
+    }
+})
+console.log('Todavía no he terminado de cargar.');
+
+function getNumHoras() {
+    let numHorasHorario;
+    if (ajustes.exists()) {
+        numHorasHorario = ajustes.data().numHoras;
+    } else {
+        console.log("No such document!");
+    }
+    return numHorasHorario;
+}
 
 onAuthStateChanged(auth, (usuario) => {
     if (usuario) {
@@ -110,22 +140,12 @@ onAuthStateChanged(auth, (usuario) => {
             });
     } else {
         imprimirLoginForm();
+        userId = "";
         modalAuth.show();
     }
 });
 
 /*Funcion botones */
-pictosHorarioSnapshot.forEach((doc) => {
-    let pictoData = doc.data();
-    pictoData.id = doc.id;
-    arrayPictosHorario.push(pictoData);
-});
-
-pictosCalendarioSnapshot.forEach((doc) => {
-    let pictoData = doc.data();
-    pictoData.id = doc.id;
-    arrayPictosCalendario.push(pictoData);
-});
 
 btnHorario.addEventListener("click", () => {
     horarioContainer.style.display = "block";
@@ -193,11 +213,11 @@ btnDerDia.addEventListener("click", () => {
 function imprimirLoginForm() {
     authForm.innerHTML = `
         <div class="mb-2 form-group">
-            <label for="usuario" class="form-label">Correo electrónico</label>
+            <label for="usuario" class="form-label"><i class="fa-solid fa-at"></i>Correo electrónico</label>
             <input type="text" class="form-control" placeholder="Correo electrónico" id="usuario" required>
         </div>
         <div class="mb-2 form-group">
-            <label for="pwd" class="form-label">Contraseña</label>
+            <label for="pwd" class="form-label"><i class="fa-solid fa-lock"></i>Contraseña</label>
             <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
         </div>
         <div class="modal-footer row align-items-start">
@@ -209,6 +229,12 @@ function imprimirLoginForm() {
     tituloModalAuth.innerText = "Iniciar Sesión";
     document.getElementById("enlaceaSignup").addEventListener("click", imprimirSignupForm);
     document.getElementById("login").addEventListener("click", login);
+    let inputLogin = document.querySelectorAll(".loginForm input");
+    inputLogin.forEach(function (input) {
+        input.addEventListener("keyup", () => {
+            validacionFormulario(inputLogin.length, document.getElementById("login"), inputLogin);
+        });
+    });
 }
 
 function login() {
@@ -223,17 +249,18 @@ function login() {
             modalAuth.hide();
         }).catch(err => {
             console.log(err.message);
-            errorMessage.innerText = err.message;
+            errorMessage.innerText = catchMensajeError(error.code);
         })
 }
 
 function signup() {
+    let numHoras = getNumHoras();
     let usuario = document.getElementById("usuario").value;
     let pwd = document.getElementById("pwd").value;
     let errorMessage = document.querySelector(".errorMessage");
     let nombreUser = document.getElementById("nombre").value;
     let apellidosUser = document.getElementById("apellidos").value;
-    let arrayVacío = Array(numHorasHorario).fill("+");
+    let arrayVacío = Array(numHoras).fill("+");
     createUserWithEmailAndPassword(auth, usuario, pwd)
         .then(cred => {
             userId = cred.user.uid;
@@ -255,7 +282,7 @@ function signup() {
             });
         }).catch(err => {
             console.log(err.message);
-            errorMessage.innerText = err.message;
+            errorMessage.innerText = catchMensajeError(error.code);
         });
 }
 
@@ -287,6 +314,44 @@ function imprimirSignupForm() {
     tituloModalAuth.innerText = "Registrarse";
     document.getElementById("cancelarSignup").addEventListener("click", imprimirLoginForm);
     document.getElementById("signup").addEventListener("click", signup);
+    let inputSignup = document.querySelectorAll(".signupForm input");
+    inputSignup.forEach(function (input) {
+        input.addEventListener("keyup", () => {
+            validacionFormulario(inputSignup.length, document.getElementById("signup"), inputSignup);
+        });
+    });
+}
+
+function catchMensajeError(error) {
+    let mensaje = "";
+    if (error === 'auth/invalid-email') {
+        mensaje = "El formato del email no es válido."
+    } else if (error === 'auth/user-not-found') {
+        mensaje = "No existe este usuario."
+    } else if (error === 'auth/wrong-password') {
+        mensaje = "La contraseña no son correctos."
+    } else if (error === 'auth/weak-password') {
+        mensaje = "La contraseña debe tener mínimo 6 caracteres."
+    } else if (error === 'auth/email-already-exists') {
+        mensaje = "Ya existe una cuenta con este correo."
+    } else {
+        mensaje = "Error inesperado."
+    }
+    return mensaje;
+}
+
+function validacionFormulario(length, btn, arrayInput) {
+    let completado = 0;
+    arrayInput.forEach(function (input) {
+        if (input.value.trim() === "") {
+            btn.disabled = true;
+        } else {
+            completado++;
+        }
+    });
+    if (completado === length) {
+        btn.disabled = false;
+    }
 }
 
 /*Horario */
@@ -326,7 +391,8 @@ function anadirColumnas() {
 }
 
 /*Tabla de horario semanal*/
-function crearTablaVacia(numFilas) {
+function crearTablaVacia() {
+    let numFilas = getNumHoras();
     anadirColumnas();
     for (let i = 0; i < numFilas; i++) {
         let fila = tablaHorarioSemana.insertRow();
@@ -417,7 +483,7 @@ function imprimirModalAdd(text, addBtnFun, carga) {
     let btnCancelar = document.createElement("button");
     btnCancelar.classList.add("btn", "btnRojo", "col-5");
     btnCancelar.setAttribute("data-bs-dismiss", "modal");
-    btnCancelar.innerHTML = `<i class="fas fa-times"></i>Cancelar</button>`;
+    btnCancelar.innerHTML = `<i class="fa-solid fa-xmark"></i>Cancelar</button>`;
     let btnAdd = document.createElement("button");
     btnAdd.classList.add("btn", "btnVerde", "col-5");
     btnAdd.innerHTML = `${text}`;
@@ -472,9 +538,13 @@ async function addAsignatura() {
         arrayAux[numFila] = asiganadir.nombre;
         document.getElementById(idCeldaClickada).innerHTML = "<img src='" + asiganadir.foto + "' class='rounded dibujoHorario'>";
         addForm.reset();
-        await updateDoc(alumnoRef, {
-            [diaSemana]: arrayAux
-        });
+        try {
+            await updateDoc(alumnoRef, {
+                [diaSemana]: arrayAux
+            });
+        } catch (e) {
+            console.log(error);
+        }
         modalAdd.hide();
     }
 }
@@ -483,9 +553,13 @@ async function deleteAsignatura() {
     let diaSemana = getDiaHorario(numCol);
     let arrayAux = alumData[diaSemana];
     arrayAux[numFila] = "+";
-    await updateDoc(alumnoRef, {
-        [diaSemana]: arrayAux
-    });
+    try {
+        await updateDoc(alumnoRef, {
+            [diaSemana]: arrayAux
+        });
+    } catch (e) {
+        console.log(error);
+    }
     modalAdd.hide();
 }
 
@@ -513,9 +587,13 @@ async function addEventoCal(fechaclikada, contador) {
             start: new Date(fechaclikada.getFullYear(), fechaclikada.getMonth(), fechaclikada.getDate(), hora, 0),
         };
         arrayCalendario.push(eventoAdd);
-        await updateDoc(alumnoRef, {
-            calendario: arrayCalendario
-        });
+        try {
+            await updateDoc(alumnoRef, {
+                calendario: arrayCalendario
+            });
+        } catch (e) {
+            console.log(error);
+        }
         calendar.addEvent(eventoAdd);
         modalAdd.hide();
     }
@@ -527,14 +605,18 @@ async function deleteEventoCal(eventId) {
     if (indexDel != -1) {
         arrayCalendario.splice(indexDel, 1);
         calendar.getEventById(eventId).remove();
-        await updateDoc(alumnoRef, {
-            calendario: arrayCalendario
-        })
+        try {
+            await updateDoc(alumnoRef, {
+                calendario: arrayCalendario
+            });
+        } catch (e) {
+            console.log(error);
+        }
         modalAdd.hide();
     }
 }
 
-crearTablaVacia(numHorasHorario);
+crearTablaVacia();
 
 /*Tabla de horario diario*/
 function elegirColor(colgroup) {

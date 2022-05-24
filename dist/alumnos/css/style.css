@@ -158,7 +158,7 @@ form>.modal-footer {
 }
 
 .btnVerde {
-    border: 2.5px solid #2a8156;
+    border: 3px solid #2a8156;
     background-color: #d8f3e5;
 }
 
@@ -169,7 +169,7 @@ form>.modal-footer {
 }
 
 .btnRojo {
-    border: 2.5px solid #e60000;
+    border: 3px solid #e60000;
     background-color: #fcc1c1;
 }
 
@@ -216,7 +216,6 @@ form>.modal-footer {
 }
 
 .colLunes {
-    cursor: default;
     background-color: var(--colorLunes);
 }
 
