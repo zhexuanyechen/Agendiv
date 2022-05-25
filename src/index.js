@@ -70,6 +70,7 @@ const btnIzqDia = document.getElementById("btnIzqDia");
 const btnDerDia = document.getElementById("btnDerDia");
 const btnSemanaH = document.getElementById("btnsemanaH");
 const logoutButton = document.getElementById('logout');
+const btnAjustes = document.getElementById('ajustes');
 
 /*Tablas*/
 const tablaHorarioSemana = document.getElementById("tablaHorarioSemana");
@@ -99,7 +100,7 @@ try {
         pictoData.id = doc.id;
         arrayPictosHorario.push(pictoData);
     });
-
+    console.log(arrayPictosHorario);
     pictosCalendarioSnapshot.forEach((doc) => {
         let pictoData = doc.data();
         pictoData.id = doc.id;
@@ -110,7 +111,7 @@ try {
     console.log(e);
 };
 
-function getNumHoras() {
+function getAjustesNumHoras() {
     let numHorasHorario;
     if (ajustes.exists()) {
         numHorasHorario = ajustes.data().numHoras;
@@ -118,6 +119,16 @@ function getNumHoras() {
         console.log("No such document!");
     }
     return numHorasHorario;
+}
+
+function getAjustesArrayHoras() {
+    let arrayHoras;
+    if (ajustes !== null) {
+        arrayHoras = ajustes.data().horario;
+    } else {
+        console.log("No such document!");
+    }
+    return arrayHoras;
 }
 
 onAuthStateChanged(auth, (usuario) => {
@@ -154,6 +165,10 @@ btnCalendario.addEventListener("click", () => {
     btnContainer.style.display = "none";
     calendarContainer.style.display = "block";
     renderizarCal();
+});
+
+btnAjustes.addEventListener('click', () => {
+    showAjustes();
 });
 
 logoutButton.addEventListener('click', () => {
@@ -250,7 +265,7 @@ function login() {
 }
 
 function signup() {
-    let numHoras = getNumHoras();
+    let numHoras = getAjustesNumHoras();
     let usuario = document.getElementById("usuario").value;
     let pwd = document.getElementById("pwd").value;
     let errorMessage = document.querySelector(".errorMessage");
@@ -358,7 +373,7 @@ function getHorario(alumAsignaturas) {
             let cellId = "r" + j + "-c" + i;
             if (arrayAsignaturas[i][j] !== "+") {
                 let asiganadir = arrayPictosHorario.find(asig => asig.nombre === arrayAsignaturas[i][j]);
-                document.getElementById(cellId).innerHTML = `<img src="${asiganadir.foto}"class="rounded dibujoHorario"><p>${arrayAsignaturas[i][j]}</p>`;
+                document.getElementById(cellId).innerHTML = `<img src="${asiganadir.foto}"class="rounded dibujoHorario"><p class="textPicto">${arrayAsignaturas[i][j]}</p>`;
             } else {
                 document.getElementById(cellId).innerHTML = `<img src="pictogramas/+.png" class="rounded addHorario"><p>+</p>`;
             }
@@ -388,7 +403,8 @@ function anadirColumnas() {
 
 /*Tabla de horario semanal*/
 function crearTablaVacia() {
-    let numFilas = getNumHoras();
+    let numFilas = getAjustesNumHoras();
+    let arrayHorario = getAjustesArrayHoras();
     anadirColumnas();
     for (let i = 0; i < numFilas; i++) {
         let fila = tablaHorarioSemana.insertRow();
@@ -401,10 +417,12 @@ function crearTablaVacia() {
                 newcell.addEventListener("click", funcionCelda, false);
             } else {
                 newcell.classList.add("horasAjuste");
-                newcell.innerHTML = "<p>Hora1</p><p>Hora2</p>"
+                newcell.innerHTML = "<p>" + arrayHorario[i].inicio + "</p><p>" + arrayHorario[i].fin + "</p>";
             }
         }
     }
+    showHideHoras();
+    showHidePictos();
 }
 
 function funcionCelda() {
@@ -464,9 +482,15 @@ function imprimirModalAdd(text, addBtnFun, carga) {
     let btnScrollUp = document.createElement("button");
     btnScrollUp.classList.add("btn", "scrollBtnUp");
     btnScrollUp.innerHTML = `<i class="far fa-arrow-alt-circle-up"></i>Subir`
+    btnScrollUp.addEventListener('click', () => {
+        addForm.scrollTop -= 100;
+    });
     let btnScrollDown = document.createElement("button");
     btnScrollDown.classList.add("btn", "scrollBtnDown");
     btnScrollDown.innerHTML = `<i class="far fa-arrow-alt-circle-down"></i>Bajar`;
+    btnScrollDown.addEventListener('click', () => {
+        addForm.scrollTop += 100;
+    });
     btnScrollDiv.append(btnScrollDown, btnScrollUp);
     let btnScrollDivClone = btnScrollDiv.cloneNode(true);
     let addForm = document.createElement("form");
@@ -486,14 +510,9 @@ function imprimirModalAdd(text, addBtnFun, carga) {
     btnModalDiv.append(btnCancelar, btnAdd);
     contenidoModalAdd.append(btnModalDiv);
     btnAdd.addEventListener("click", addBtnFun);
-    document.querySelectorAll(".scrollBtnUp").forEach((btn) => {
-        btn.addEventListener("click", () => {
-            addForm.scrollTop -= 150;
-        });
-    });
-    document.querySelectorAll(".scrollBtnDown").forEach((btn) => {
-        btn.addEventListener("click", () => {
-            addForm.scrollTop += 150;
+    document.querySelectorAll("input[name='opcionHorario']").forEach((option) => {
+        option.addEventListener('click', function () {
+            this.parentElement.style.borderColor = 'red';
         });
     });
 }
@@ -514,7 +533,8 @@ function imprimirModalAddCalendario(fechaCalClickada, contador) {
 function cargarAsignaturasModal() {
     let html = "";
     for (let i = 0; i < arrayPictosHorario.length; i++) {
-        html += `<div class="col-5">
+        if (arrayPictosHorario[i].id !== 'kYDPxKOtuPep514BsL8x')
+            html += `<div class="col-5">
                   <div class="dibujoInput"><input type="radio" name="opcionHorario" id="${arrayPictosHorario[i].id}" value="${arrayPictosHorario[i].nombre}">
                     <label for="${arrayPictosHorario[i].id}" class="imgLabel"><img src="${arrayPictosHorario[i].foto}"class="rounded dibujo-cc"></label>
                   </div>
@@ -541,6 +561,11 @@ async function addAsignatura() {
     let arrayAux = alumData[diaSemana];
     if (seleccionado) {
         let asiganadir = arrayPictosHorario.find(asig => asig.nombre == seleccionado.value);
+        let auxLength = arrayAux.length;
+        while (numFila > auxLength) {
+            arrayAux.push("+");
+            auxLength++;
+        }
         arrayAux[numFila] = asiganadir.nombre;
         document.getElementById(idCeldaClickada).innerHTML = "<img src='" + asiganadir.foto + "' class='rounded dibujoHorario'>";
         addForm.reset();
@@ -548,10 +573,10 @@ async function addAsignatura() {
             await updateDoc(alumnoRef, {
                 [diaSemana]: arrayAux
             });
+            modalAdd.hide();
         } catch (e) {
-            console.log(error);
+            console.log(e);
         }
-        modalAdd.hide();
     }
 }
 
@@ -564,7 +589,7 @@ async function deleteAsignatura() {
             [diaSemana]: arrayAux
         });
     } catch (e) {
-        console.log(error);
+        console.log(e);
     }
     modalAdd.hide();
 }
@@ -576,7 +601,6 @@ function getArrayCalendario(array) {
         calEvent.image_url = eventoAux.foto.toString();
         calEvent.start = calEvent.start.toDate();
     });
-    console.log(arrayCal);
     return arrayCal;
 }
 
@@ -598,7 +622,7 @@ async function addEventoCal(fechaclikada, contador) {
                 calendario: arrayCalendario
             });
         } catch (e) {
-            console.log(error);
+            console.log(e);
         }
         calendar.addEvent(eventoAdd);
         modalAdd.hide();
@@ -616,7 +640,7 @@ async function deleteEventoCal(eventId) {
                 calendario: arrayCalendario
             });
         } catch (e) {
-            console.log(error);
+            console.log(e);
         }
         modalAdd.hide();
     }
@@ -707,6 +731,7 @@ let calendar = new Calendar(calendario, {
     editable: false,
     contentHeight: "auto",
     navLinks: true,
+    slotMinTime: "08:00:00",
     eventDurationEditable: false,
     dayMaxEventRows: true,
     views: {
@@ -795,4 +820,105 @@ function renderizarCal() {
 
 function generarUID() {
     return Math.floor(Date.now() * Math.random() * 100).toString() + ((Math.random() + 1).toString(36).substring(3))
+}
+
+/*Ajustes*/
+function showAjustes() {
+    contenidoModalAdd.innerHTML = '';
+    tituloModalAdd.innerHTML = '<i class="fa-solid fa-gear"></i>Ajustes';
+    console.log("Ajustes");
+    let form = document.createElement('form');
+    let html = `
+    <h3 class="ajustesTitle">Ver horas</h3>
+    <div class="mb-2">
+        <img class="imgAjustes" src="./pictogramas/reloj.png">
+        <div class="form-check form-check-inline me-5">
+        <input class="form-check-input" type="radio" id="horasHorarioSi" name="verHoras" value="horasSi">
+        <label class="form-check-label" for="horasHorarioSi">SI</label>
+        </div>
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" id="horasHorarioNo" name="verHoras" value="horasNo">
+        <label class="form-check-label" for="horasHorarioNo">NO</label>
+        </div>
+    </div>
+    <h3 class="ajustesTitle">Ver pictogramas</h3>
+    <div class="mb-2">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" id="pictogramasSi" name="verPictogramas" value="pictosSi">
+            <label class="form-check-label" for="pictogramasSi"><img class="imgAjustes" src="./pictogramas/pictograms.png"></label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" id="pictogramasNo" name="verPictogramas" value="pictosNo">
+            <label class="form-check-label" for="pictogramasNo"><img class="imgAjustes" src="./pictogramas/A.png"></label>
+        </div>
+    </div>`;
+    form.innerHTML = html;
+    contenidoModalAdd.append(form);
+    let footerModal = document.createElement("div");
+    footerModal.classList.add("modal-footer", "row", "row-col-2", "align-items-stretch", "justify-content-around");
+    let btnCancelar = document.createElement("button");
+    btnCancelar.classList.add("btn", "btnRojo", "col-5");
+    btnCancelar.setAttribute("data-bs-dismiss", "modal");
+    btnCancelar.innerHTML = `<i class="fa-solid fa-xmark"></i>Cancelar</button>`;
+    let btnGuardar = document.createElement("button");
+    btnGuardar.classList.add("btn", "btnVerde", "col-5");
+    btnGuardar.innerHTML = `<i class="fa-solid fa-floppy-disk"></i>Guardar Ajustes`;
+    btnGuardar.addEventListener("click", ajustesLocal);
+    footerModal.append(btnCancelar, btnGuardar);
+    contenidoModalAdd.append(footerModal);
+    modalAdd.show();
+}
+
+function ajustesLocal() {
+    let verHora = document.querySelector("input[name=verHoras]:checked").value;
+    let verPictos = document.querySelector("input[name=verPictogramas]:checked").value;
+    localStorage.setItem("verHoras", verHora);
+    localStorage.setItem("verPictos", verPictos);
+    showHideHoras();
+    showHidePictos();
+    modalAdd.hide();
+}
+
+function showHideHoras() {
+    let verHoras;
+    if (localStorage.getItem("verHoras") === null) {
+        verHoras = "horasNo"
+    } else {
+        verHoras = localStorage.getItem("verHoras");
+    }
+    if (verHoras === "horasNo") {
+        document.querySelectorAll(".horasAjuste").forEach(celda => {
+            celda.style.display = "none";
+        });
+        document.querySelector(".colHorario").style.display = "none";
+    } else if (verHoras === "horasSi") {
+        document.querySelectorAll(".horasAjuste").forEach(celda => {
+            celda.style.display = null;
+        });
+        document.querySelector(".colHorario").style.display = null;
+    }
+}
+
+function showHidePictos() {
+    let verPictos;
+    if (localStorage.getItem("verPictos") === null) {
+        verPictos = "pictosNo"
+    } else {
+        verPictos = localStorage.getItem("verPictos");
+    }
+    if (verPictos === "pictosNo") {
+        document.querySelectorAll(".dibujoHorario").forEach(celda => {
+            celda.style.display = "none";
+        });
+        document.querySelectorAll(".textPicto").forEach(celda => {
+            celda.style.display = "block";
+        });
+    } else if (verPictos === "pictosSi") {
+        document.querySelectorAll(".dibujoHorario").forEach(celda => {
+            celda.style.display = "block";
+        });
+        document.querySelectorAll(".textPicto").forEach(celda => {
+            celda.style.display = "none";
+        });
+    }
 }

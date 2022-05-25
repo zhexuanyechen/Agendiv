@@ -403,7 +403,7 @@ function imprimirListaPictos(title, array, lista) {
             modalEditar.show();
         });
     });
-    document.querySelector('#kYDPxKOtuPep514BsL8x .btnBorrarAct').disabled = true;
+    document.querySelector('#kYDPxKOtuPep514BsL8x .btnBorrarAct').style.display = 'none';
 }
 
 function imprimirListaPictosCal() {

@@ -69,10 +69,14 @@ i {
 .btnVolver {
     border: none;
     background-color: var(--fondoApp);
+    padding: 0;
 }
 
 .ajustesBtn>img,
 .btnVolver>img {
+    display: block;
+    margin: auto;
+    width: 64px;
     filter: drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.35));
 }
 
@@ -140,7 +144,7 @@ form>.modal-footer {
 
 #addForm {
     overflow-y: auto;
-    max-height: 70vh;
+    max-height: 40vh;
     overflow-x: hidden;
 }
 
@@ -315,13 +319,18 @@ form>.modal-footer {
     align-items: center;
 }
 
+#addForm>.col-5 {
+    margin-bottom: 0.15em;
+}
+
 .dibujoInput:hover {
     background-color: rgb(233, 233, 233);
+    border-color: red;
 }
 
 .imgLabel {
     display: inline-block;
-    width: 85%;
+    width: 100%;
     cursor: pointer;
     vertical-align: middle;
 }
@@ -370,6 +379,14 @@ input[type=radio]:active+.imgLabel {
     width: 35%;
     padding: 0.1em;
     margin: 0.3em;
+}
+
+.scrollBtnUp:hover,
+.scrollBtnDown:hover {
+    color: white;
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
+    background-color: #1E2B37;
+    border-color: #1E2B37
 }
 
 /*Calendario*/
@@ -542,6 +559,41 @@ tr>.fc-list-event-graphic {
 a.fc-timegrid-event {
     border: none;
 
+}
+
+/*Ajustes*/
+.ajustesTitle {
+    border-bottom: 1px solid black;
+}
+
+.imgAjustes {
+    width: 100px;
+    margin-right: 0.5em;
+}
+
+.form-check .form-check-label {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.form-check .form-check-input {
+    width: 1.4em;
+    height: 1.4em;
+    margin-right: 0.3em;
+}
+
+.form-check .form-check-input {
+    margin-left: -1.5em;
+}
+
+.form-check .form-check-input:checked[type="radio"] {
+    background-color: red;
+    border-color: red;
+}
+
+.form-check .form-check-input:focus[type="radio"] {
+    border-color: red;
+    box-shadow: 2px 2px 2px #ef686899;
 }
 
 /*Media queries*/
