@@ -28,7 +28,7 @@ i {
     font-weight: bolder;
 }
 
-.contenedor{
+.contenedor {
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -141,6 +141,7 @@ form>.modal-footer {
 #addForm {
     overflow-y: auto;
     max-height: 70vh;
+    overflow-x: hidden;
 }
 
 .errorMessage {
@@ -150,7 +151,8 @@ form>.modal-footer {
 }
 
 /*Botones aceptar-rechazar*/
-.btnVerde, .btnRojo{
+.btnVerde,
+.btnRojo {
     border-radius: 4px;
     font-weight: bold;
     box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.30);
@@ -196,7 +198,7 @@ form>.modal-footer {
     vertical-align: middle;
 }
 
-.tablaHorario th{
+.tablaHorario th {
     padding: 0.5em;
 }
 
@@ -235,18 +237,19 @@ form>.modal-footer {
     background-color: var(--colorViernes);
 }
 
-#horarioContainer{
+#horarioContainer {
     display: none;
 }
 
-.dibujoHorario, .addHorario {
+.dibujoHorario,
+.addHorario {
     display: block;
     margin: auto;
     width: 70%;
     height: auto;
 }
 
-.dibujoHorario{
+.dibujoHorario {
     cursor: pointer;
     display: block;
     margin: auto;
@@ -259,7 +262,8 @@ form>.modal-footer {
     background: rgba(0, 0, 0, 0.2);
 }
 
-.dibujoHorario+p, .addHorario+p{
+.dibujoHorario+p,
+.addHorario+p {
     display: none;
 }
 
@@ -278,12 +282,13 @@ form>.modal-footer {
     max-width: 85%;
 }
 
-#tablaHorarioDia .dibujoHorario {
+#tablaHorarioDia .dibujoHorario,
+#tablaHorarioDia .addHorario {
     min-width: 0;
     max-width: 50%;
 }
 
-.tablaHorario th.miercoles{
+.tablaHorario th.miercoles {
     padding: 0.5em 0.3em;
     font-size: 0.95em;
 }
@@ -303,7 +308,6 @@ form>.modal-footer {
     background-color: white;
     border: 2px solid var(--colorOscuro);
     border-radius: 5px;
-    margin-bottom: 0.3em;
     height: 100%;
     vertical-align: middle;
     display: flex;
@@ -327,7 +331,8 @@ input[type=radio]:active+.imgLabel {
     border-color: red;
 }
 
-.btnCambiarDia, #btnsemanaH {
+.btnCambiarDia,
+#btnsemanaH {
     display: none;
 }
 
@@ -355,7 +360,8 @@ input[type=radio]:active+.imgLabel {
     margin: 0 0.5em;
 }
 
-.scrollBtnDown, .scrollBtnUp{
+.scrollBtnDown,
+.scrollBtnUp {
     font-size: 1.25em;
     color: var(--fondoApp);
     background-color: #2C3E50;
@@ -511,7 +517,7 @@ input[type=radio]:active+.imgLabel {
 }
 
 .fc .fc-event-main:hover,
-.fc .fc-event-main:click{
+.fc .fc-event-main:click {
     background: rgba(0, 0, 0, 0.2)
 }
 
@@ -533,8 +539,8 @@ tr>.fc-list-event-graphic {
     border: 0 !important;
 }
 
-a.fc-timegrid-event{
-    border:none;
+a.fc-timegrid-event {
+    border: none;
 
 }
 

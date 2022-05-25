@@ -25,7 +25,7 @@ i {
     margin-right: 0.3em;
 }
 
-.contenedor{
+.contenedor {
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -47,7 +47,7 @@ i {
     text-align: center;
 }
 
-.firstTitle{
+.firstTitle {
     display: block;
 }
 
@@ -134,8 +134,20 @@ form>.modal-footer {
     color: red;
 }
 
+#formEditHours {
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 70vh;
+}
+
+.input-group {
+    width: 90%;
+}
+
 /*Botones aceptar-rechazar*/
-.btnVerde, .btnRojo{
+.btnVerde,
+.btnRojo {
     border-radius: 4px;
     font-weight: bold;
     box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.30);
@@ -192,7 +204,7 @@ form>.modal-footer {
     background-color: var(--colorViernes);
 }
 
-.lista{
+.lista {
     margin: 1em 0.5em;
     padding: 0 1em;
     width: 100%;
@@ -200,12 +212,13 @@ form>.modal-footer {
 
 /*Pictos Container y student container*/
 #pictosContainer>h2,
-#alumnosContainer>h2{
+#alumnosContainer>h2 {
     text-align: center;
     font-weight: bolder;
 }
 
-.actividad, .alumno {
+.actividad,
+.alumno {
     width: 100%;
     border: 2px solid var(--colorOscuro);
     border-radius: 5px;
@@ -215,8 +228,10 @@ form>.modal-footer {
     margin: 0.3em 0 0.3em 0;
 }
 
-.actividad p {
+.actividad p,
+.alumno p {
     margin-bottom: 0.1em;
+    font-size: 1.2em;
 }
 
 .pictoList>img {
@@ -227,29 +242,30 @@ form>.modal-footer {
 #listaPictosHor,
 #listaPictosCal,
 #pictosContainer,
-#alumnosContainer{
+#alumnosContainer {
     display: none;
 }
 
-.btnBorrarAct{
+.btnBorrarAct {
     width: 100%;
 }
 
-#uploadImgForm{
+#uploadImgForm {
     width: 80%;
     margin: auto;
 }
 
-.aviso{
+.aviso {
+    font-size: 1.1em;
     font-weight: bold;
     color: rgb(255, 98, 98);
 }
 
-.celdaEditar > select {
+.celdaEditar>select {
     background-color: white;
 }
 
-.btnHoras{
+.btnHoras {
     display: block;
     margin-left: auto;
 }
@@ -276,34 +292,45 @@ form>.modal-footer {
     font-size: 0.9rem;
 }
 
-@media (max-width:576px){
-    .pictoList>img{
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+@media (max-width:576px) {
+    .pictoList>img {
         display: block;
         margin: auto;
     }
 
-    .firstTitle{
+    .firstTitle {
         display: none;
     }
 }
 
 @media (max-width:768px) {
+
     html,
     body {
         font-size: 1rem;
     }
 
-    .pictoList>img{
+    .pictoList>img {
         width: 40%;
     }
 
-    #uploadImgForm{
+    #uploadImgForm {
         width: 100%;
     }
 }
 
-@media (min-width: 576px) and (max-width:768px){
-    .btnIndex{
+@media (min-width: 576px) and (max-width:768px) {
+    .btnIndex {
         width: 75%;
         display: block;
         margin: auto;

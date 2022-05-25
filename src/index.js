@@ -85,35 +85,30 @@ let unsubscribe;
 let diaSemana = new Date().getDay();
 let arrayPictosHorario = [];
 let arrayPictosCalendario = [];
-
 let idCeldaClickada, numFila, numCol;
-
-modalAuth.show();
-
 let pictosHorarioSnapshot, pictosCalendarioSnapshot, ajustes;
 
-window.addEventListener('load', async () => {
-    try {
-        ajustes = await getDoc(doc(db, "ajustes", "generales"));
-        pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
-        pictosCalendarioSnapshot = await getDocs(collection(db, "pictosCalendario"));
-        pictosHorarioSnapshot.forEach((doc) => {
-            let pictoData = doc.data();
-            pictoData.id = doc.id;
-            arrayPictosHorario.push(pictoData);
-        });
+document.body.style.visibility = 'hidden';
 
-        pictosCalendarioSnapshot.forEach((doc) => {
-            let pictoData = doc.data();
-            pictoData.id = doc.id;
-            arrayPictosCalendario.push(pictoData);
-        });
-        console.log('Inicialización terminada');
-    } catch (e) {
-        console.log(e);
-    }
-})
-console.log('Todavía no he terminado de cargar.');
+try {
+    ajustes = await getDoc(doc(db, "ajustes", "generales"));
+    pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
+    pictosCalendarioSnapshot = await getDocs(collection(db, "pictosCalendario"));
+    pictosHorarioSnapshot.forEach((doc) => {
+        let pictoData = doc.data();
+        pictoData.id = doc.id;
+        arrayPictosHorario.push(pictoData);
+    });
+
+    pictosCalendarioSnapshot.forEach((doc) => {
+        let pictoData = doc.data();
+        pictoData.id = doc.id;
+        arrayPictosCalendario.push(pictoData);
+    });
+    console.log('Inicialización terminada');
+} catch (e) {
+    console.log(e);
+};
 
 function getNumHoras() {
     let numHorasHorario;
@@ -127,6 +122,7 @@ function getNumHoras() {
 
 onAuthStateChanged(auth, (usuario) => {
     if (usuario) {
+        document.body.style.visibility = 'visible';
         userId = usuario.uid;
         alumnoRef = doc(db, "alumnos", userId);
         modalAuth.hide();
@@ -142,11 +138,11 @@ onAuthStateChanged(auth, (usuario) => {
         imprimirLoginForm();
         userId = "";
         modalAuth.show();
+        document.body.style.visibility = 'visible';
     }
 });
 
 /*Funcion botones */
-
 btnHorario.addEventListener("click", () => {
     horarioContainer.style.display = "block";
     btnContainer.style.display = "none";
@@ -249,7 +245,7 @@ function login() {
             modalAuth.hide();
         }).catch(err => {
             console.log(err.message);
-            errorMessage.innerText = catchMensajeError(error.code);
+            errorMessage.innerText = catchMensajeError(err.code);
         })
 }
 
@@ -282,7 +278,7 @@ function signup() {
             });
         }).catch(err => {
             console.log(err.message);
-            errorMessage.innerText = catchMensajeError(error.code);
+            errorMessage.innerText = catchMensajeError(err.code);
         });
 }
 
@@ -475,7 +471,7 @@ function imprimirModalAdd(text, addBtnFun, carga) {
     let btnScrollDivClone = btnScrollDiv.cloneNode(true);
     let addForm = document.createElement("form");
     addForm.id = "addForm";
-    addForm.classList.add("row", "row-cols-2", "justify-content-around", "gy-1")
+    addForm.classList.add("row", "row-cols-2", "justify-content-around");
     contenidoModalAdd.append(btnScrollDiv, addForm, btnScrollDivClone);
     carga();
     let btnModalDiv = document.createElement("div");
@@ -490,6 +486,16 @@ function imprimirModalAdd(text, addBtnFun, carga) {
     btnModalDiv.append(btnCancelar, btnAdd);
     contenidoModalAdd.append(btnModalDiv);
     btnAdd.addEventListener("click", addBtnFun);
+    document.querySelectorAll(".scrollBtnUp").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            addForm.scrollTop -= 150;
+        });
+    });
+    document.querySelectorAll(".scrollBtnDown").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            addForm.scrollTop += 150;
+        });
+    });
 }
 
 function imprimirModalAddHorario() {

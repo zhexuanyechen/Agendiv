@@ -55,6 +55,7 @@ const btnLogout = document.getElementById("logout");
 const btnPictosHor = document.getElementById("btnPictoHorario");
 const btnPictosCal = document.getElementById("btnPictoCal");
 const btnUploadPictos = document.getElementById("btnUploadPictos");
+const btnEditHoras = document.getElementById("btnEditHoras");
 
 /*Contenedores*/
 const btnContainer = document.getElementById("btnContainer");
@@ -80,9 +81,9 @@ const listaPictosHor = document.getElementById("listaPictosHor");
 const listaPictosCal = document.getElementById("listaPictosCal");
 const listaAlumnos = document.getElementById("listaAlumnos");
 
-let unsubscribe;
+let unsubscribe, ajustesListener;
 
-let pictosHorarioSnapshot, pictosCalendarioSnapshot, ajustes;
+let pictosCListener, pictosHListener, ajustes;
 let arrayPictosHorario = [];
 let arrayPictosCalendario = [];
 let alumnosArraySnapshot = [];
@@ -101,10 +102,12 @@ btnLogout.addEventListener('click', () => {
     signOut(auth)
         .then(() => {
             console.log('user signed out');
-            unsubscribe();
             imprimirLoginForm();
             modalAuth.show();
             unsubscribe();
+            ajustesListener();
+            pictosCListener();
+            pictosHListener();
         })
         .catch(err => {
             console.log(err.message);
@@ -141,6 +144,8 @@ btnUploadPictos.addEventListener("click", () => {
     listaPictosCal.style.display = "none";
     uploadImgForm.style.display = "block";
 });
+
+btnEditHoras.addEventListener("click", showHorasEditar);
 
 /*Autenticación*/
 onAuthStateChanged(auth, (usuario) => {
@@ -258,15 +263,18 @@ inputImage.addEventListener("change", checkInputImage, false);
 async function uploadInputImageHorario() {
     if (inputImage.files.length !== 0) {
         let image = inputImage.files[0];
-        let imageName = image.name.split(".", 1)[0];
+        console.log(image);
+        let imageName = image.name;
+        console.log(imageName.split(".", 1)[0]);
         const pictosHorarioRef = ref(storage, '/pictosHorario/' + imageName);
         uploadImage(pictosHorarioRef).then((imgUrl) => {
             addDoc(collection(db, 'pictosHorario'), {
-                nombre: imageName,
+                nombre: imageName.split(".", 1)[0],
                 foto: imgUrl,
                 audio: "prueba"
             }).then(() => {
-                confirmarUpdatePicto()
+                uploadImgForm.reset();
+                confirmarUpdatePicto(imageName)
             }).catch((error => {
                 console.log(error);
             }));
@@ -277,14 +285,15 @@ async function uploadInputImageHorario() {
 async function uploadInputImageCalendario() {
     if (inputImage.files.length !== 0) {
         let image = inputImage.files[0];
-        let imageName = image.name.split(".", 1)[0];
+        let imageName = image.name;
         const pictosCalRef = ref(storage, '/pictosCalendario/' + imageName);
         uploadImage(pictosCalRef).then((imgUrl) => {
             addDoc(collection(db, 'pictosCalendario'), {
-                nombre: imageName,
+                nombre: imageName.split(".", 1)[0],
                 foto: imgUrl
             }).then(() => {
-                confirmarUpdatePicto()
+                uploadImgForm.reset();
+                confirmarUpdatePicto(imageName);
             }).catch((error => {
                 console.log(error);
             }));
@@ -327,35 +336,42 @@ btnUploadHorario.addEventListener("click", uploadInputImageHorario, false);
 btnUploadCalendario.addEventListener("click", uploadInputImageCalendario, false);
 
 /*Show pictogramas*/
-window.addEventListener('load', async () => {
-    try {
-        ajustes = await getDoc(doc(db, "ajustes", "generales"));
-        pictosHorarioSnapshot = await getDocs(collection(db, "pictosHorario"));
-        pictosCalendarioSnapshot = await getDocs(collection(db, "pictosCalendario"));
+try {
+    ajustesListener = onSnapshot(doc(db, "ajustes", "generales"), (doc) => {
+        ajustes = doc.data();
+    });
+
+    let queryH = query(collection(db, "pictosHorario"));
+    pictosHListener = onSnapshot(queryH, (pictosHorarioSnapshot) => {
         pictosHorarioSnapshot.forEach((doc) => {
             let pictoData = doc.data();
             pictoData.id = doc.id;
             arrayPictosHorario.push(pictoData);
         });
+        imprimirListaPictosHor();
+    });
+
+    let queryC = query(collection(db, "pictosCalendario"));
+    pictosCListener = onSnapshot(queryC, (pictosCalendarioSnapshot) => {
         pictosCalendarioSnapshot.forEach((doc) => {
             let pictoData = doc.data();
             pictoData.id = doc.id;
             arrayPictosCalendario.push(pictoData);
         });
-        imprimirListaPictosHor();
         imprimirListaPictosCal();
-        console.log('Inicialización terminada');
-    } catch (e) {
-        console.log(e);
-    }
-});
+
+    });
+    console.log('Inicialización terminada');
+} catch (e) {
+    console.log(e);
+};
 
 function readEventos(arrayPictos) {
     let html = "";
     arrayPictos.forEach((picto) => {
         html += `<div id="${picto.id}" class="actividad mb-3 row">
                 <div class="col-sm-6 col-md-7 col-lg-8">
-                    <p class="nombre"><strong>Nombre: </strong>${picto.nombre}</p>
+                    <p class="nombrePicto"><strong>Nombre: </strong>${picto.nombre}</p>
                     <div class="pictoList"><img src="${picto.foto}"></div>
                 </div>
                 <div class="col-sm-6 col-md-5 col-lg-4 d-flex flex-column justify-content-around">
@@ -387,6 +403,7 @@ function imprimirListaPictos(title, array, lista) {
             modalEditar.show();
         });
     });
+    document.querySelector('#kYDPxKOtuPep514BsL8x .btnBorrarAct').disabled = true;
 }
 
 function imprimirListaPictosCal() {
@@ -400,6 +417,7 @@ function imprimirListaPictosHor() {
 }
 
 async function borrarActividad(actividadId, tipo) {
+    let title = 'Eliminar Pictograma';
     let deleteIndex = arrayPictosHorario.findIndex(picto => picto.id == actividadId);
     try {
         if (tipo === "listaPictosHor") {
@@ -410,11 +428,12 @@ async function borrarActividad(actividadId, tipo) {
             arrayPictosHorario.splice(deleteIndex, 1);
         }
         document.getElementById(actividadId).style.display = 'none';
-        let title = 'Eliminar Pictograma';
         let text = "Se ha borrado al pictograma con id" + actividadId;
         showConfirmacion(title, text);
     } catch (e) {
         console.log(e);
+        let text = "Se ha producido un error:" + e;
+        showConfirmacion(title, text);
     }
 }
 
@@ -459,13 +478,15 @@ function imprimirAlumnos(alumnosArray) {
 }
 
 async function borrarAlumno(idAlumno) {
+    let title = 'Eliminar alumno';
     try {
         await deleteDoc(doc(db, "alumnos", idAlumno));
-        let title = 'Eliminar alumno';
         let text = "Se ha borrado al alumno con id" + idAlumno;
         showConfirmacion(title, text);
     } catch (e) {
         console.log(e);
+        let text = "Se ha producido un error:" + e;
+        showConfirmacion(title, text);
     }
 }
 
@@ -502,19 +523,18 @@ function showEditarDatos() {
 async function editarDatosAlumno(idAlumno) {
     let nombreNuevo = document.getElementById("nombreEditar").value;
     let apellidosNuevos = document.getElementById("apellidosEditar").value;
+    let title = "Editar Datos de Alumno";
     let docRef = doc(db, 'alumnos', idAlumno);
     try {
         await updateDoc(docRef, {
             nombre: nombreNuevo,
             apellidos: apellidosNuevos
         });
-        let title = "Editar Datos de Alumno";
         let texto = "Datos del alumno actualizado correctamente";
         showConfirmacion(title, texto);
         document.getElementById(idAlumno).querySelector(".nombre span").innerText = nombreNuevo;
         document.getElementById(idAlumno).querySelector(".apellidos span").innerText = apellidosNuevos;
     } catch (e) {
-        let title = "Editar Datos de Alumno";
         let texto = "Se ha producido un error: " + e;
         showConfirmacion(title, texto);
         console.log(e);
@@ -576,6 +596,7 @@ async function guardarCambiosHorario(idAlumno) {
     let tablaHorario = document.getElementById('editHorAlumnoModal');
     let numRows = tablaHorario.rows.length;
     let docRef = doc(db, 'alumnos', idAlumno);
+    let title = "Editar Horario de Alumno";
     for (let i = 0; i < 5; i++) {
         let arrayDia = [];
         for (let j = 1; j < numRows; j++) {
@@ -594,12 +615,10 @@ async function guardarCambiosHorario(idAlumno) {
             jue: arrayActualizado[3],
             vie: arrayActualizado[4]
         });
-        let title = "Editar Horario de Alumno";
         let texto = "Horario del alumno actualizado correctamente";
         showConfirmacion(title, texto);
     } catch (e) {
         console.log(e);
-        let title = "Editar Datos de Alumno";
         let texto = "Se ha producido un error: " + e;
         showConfirmacion(title, texto);
     }
@@ -617,7 +636,7 @@ function imprimirHorarioAlumno(idAlumno) {
     let alumno = alumnosArraySnapshot.find(alumno => alumno.id === idAlumno);
     let tablaHorario = document.getElementById('editHorAlumnoModal');
     let opciones = asignaturasToOpciones();
-    let hora = getAjustesHoras();
+    let hora = getAjustesNumHoras();
     let arrayAsignaturas = [alumno.lun, alumno.mar, alumno.mier, alumno.jue, alumno.vie]
     console.log(arrayAsignaturas);
     for (let i = 0; i < hora; i++) {
@@ -676,7 +695,7 @@ function showConfirmarEliminar(title, text, deleteFun) {
     contenidoModalEditar.append(footer);
 }
 
-function confirmarUpdatePicto() {
+function confirmarUpdatePicto(imageName) {
     let title = 'Añadir Pictograma';
     let text = 'Se ha subido el pictograma ' + imageName + ' a la base de datos.';
     showConfirmacion(title, text);
@@ -684,12 +703,124 @@ function confirmarUpdatePicto() {
 }
 
 /*Horas alumnos*/
-function getAjustesHoras() {
+function getAjustesNumHoras() {
     let numHorasHorario;
-    if (ajustes.exists()) {
-        numHorasHorario = ajustes.data().numHoras;
+    if (ajustes !== null) {
+        numHorasHorario = ajustes.numHoras;
     } else {
         console.log("No such document!");
     }
     return numHorasHorario;
+}
+
+function getArrayHoras() {
+    let arrayHoras;
+    if (ajustes !== null) {
+        arrayHoras = ajustes.horario;
+    } else {
+        console.log("No such document!");
+    }
+    return arrayHoras;
+}
+
+function showHorasEditar() {
+    contenidoModalEditar.innerHTML = "";
+    tituloModalEditar.innerText = 'Editar Horas alumnos';
+    let numHoras = getAjustesNumHoras();
+    let html = `<form id="formEditHours">
+    <div class="mb-2 form-group">
+        <label for="numHorasEditar" class="form-label"><i class="fa-solid fa-clock"></i>Número de horas</label>
+        <div class="input-group">
+            <button class="btn btn-outline-secondary" type="button" id="hourDown"><i class="fa-solid fa-minus"></i></button>
+            <input type="number" class="form-control" placeholder="${numHoras}" id="numHorasEditar" value="${numHoras}" min="0" max="20" required>
+            <button class="btn btn-outline-secondary" type="button" id="hourUp"><i class="fa-solid fa-plus"></i></button>
+        </div>
+    </div>
+    ${horas(numHoras)}
+    </form>
+    <div class="modal-footer row align-items-stretch justify-content-around">
+        <button type="button" id="cerrarModal" class="btnRojo col-5" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i>Cancelar</button>
+        <button type="button" id="GuardarCambiosHora" class="btnVerde col-5"><i class="fas fa-save"></i>Guardar cambios</button>
+    </div>`;
+
+    contenidoModalEditar.innerHTML = html;
+    document.getElementById('GuardarCambiosHora').addEventListener("click", saveCambiosHora);
+    document.getElementById('hourDown').addEventListener("click", bajarNumHoras);
+    document.getElementById('hourUp').addEventListener("click", subirNumHoras);
+    modalEditar.show();
+}
+
+function horas(numHoras) {
+    let html = "";
+    let arrayHoras = getArrayHoras();
+    for (let i = 0; i < numHoras; i++) {
+        html += `
+        <h3>Fila ${i+1}</h3>
+        <div class="mb-2 form-group row ms-1">
+            <div class="col-5">
+                <label for="HorasInicio${i}" class="form-label"><i class="fa-solid fa-hourglass-start"></i>Hora inicio</label>
+                <input type="text" class="form-control" id="HorasInicio${i}" placeholder="00:00" value="${arrayHoras[i].inicio}" required>
+            </div>
+            <div class="col-5">
+                <label for="HorasFin${i}" class="form-label"><i class="fa-solid fa-hourglass-end"></i>Hora final</label>
+                <input type="text" class="form-control" id="HorasFin${i}" placeholder="00:00" value="${arrayHoras[i].fin}" required>
+            </div>
+        </div>`;
+    }
+    return html;
+}
+
+async function saveCambiosHora() {
+    let title = "Editar Horas Alumnos";
+    let numHoras = document.getElementById('numHorasEditar').value;
+    let arrayHoras = [];
+    for (let i = 0; i < numHoras; i++) {
+        let init = document.getElementById('HorasInicio' + i).value;
+        let final = document.getElementById('HorasFin' + i).value;
+        arrayHoras.push({
+            inicio: init,
+            fin: final
+        });
+    }
+    try {
+        await updateDoc(doc(db, "ajustes", "generales"), {
+            horario: arrayHoras,
+            numHoras: numHoras
+        });
+        let text = "Se ha editado correctamente las horas del horario."
+        showConfirmacion(title, text);
+    } catch (e) {
+        let texto = "Se ha producido un error: " + e;
+        showConfirmacion(title, texto);
+    }
+}
+
+function subirNumHoras() {
+    let value = parseInt(document.getElementById("numHorasEditar").value);
+    if (value < 20) {
+        document.getElementById("numHorasEditar").value++;
+        let h3 = document.createElement("h3");
+        h3.innerText = "Fila " + (value + 1);
+        let div = document.createElement("div");
+        div.classList.add("mb-2", "form-group", "row", "ms-1");
+        let html = `
+            <div class="col-5">
+                <label for="HorasInicio${value}" class="form-label"><i class="fa-solid fa-hourglass-start"></i>Hora inicio</label>
+                <input type="text" class="form-control" id="HorasInicio${value}" placeholder="00:00" value="00:00" required>
+            </div>
+            <div class="col-5">
+                <label for="HorasFin${value}" class="form-label"><i class="fa-solid fa-hourglass-end"></i>Hora final</label>
+                <input type="text" class="form-control" id="HorasFin${value}" placeholder="00:00" value="00:00" required>
+            </div>`;
+        div.innerHTML = html;
+        document.getElementById("formEditHours").append(h3);
+        document.getElementById("formEditHours").append(div);
+    }
+}
+
+function bajarNumHoras() {
+    let value = document.getElementById("numHorasEditar").value;
+    if (value > 0) {
+        document.getElementById("numHorasEditar").value--;
+    }
 }
