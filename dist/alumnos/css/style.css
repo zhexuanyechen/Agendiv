@@ -21,6 +21,7 @@ body {
     color: black;
     width: 100%;
     background-color: var(--fondoApp);
+    font-family: 'Short Stack', cursive;
 }
 
 i {
@@ -72,12 +73,40 @@ i {
     padding: 0;
 }
 
-.ajustesBtn>img,
 .btnVolver>img {
     display: block;
     margin: auto;
-    width: 64px;
+    width: 74px;
     filter: drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.35));
+}
+
+.btnFotoCamera>img {
+    width: 40%;
+    display: block;
+    margin: 0.5rem auto;
+}
+
+.btnFotoCamera {
+    border: 3px solid var(--colorOscuro);
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.35);
+    font-size: 1.3em;
+}
+
+.btnFotoCamera:hover,
+.btnFotoCamera:focus {
+    background-color: #ebeb68;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
+}
+
+.footerCamara {
+    margin-top: 0.5em;
+    width: 99%;
+}
+
+.footerCamara>button {
+    width: 40%;
 }
 
 .ajustesBtn:hover>img,
@@ -85,6 +114,31 @@ i {
 .ajustesBtn:focus>img,
 .btnVolver:focus>img {
     filter: drop-shadow(10px 10px 4px rgba(0, 0, 0, 0.5));
+}
+
+.dropdown-item>img {
+    width: 50px;
+    display: inline-block;
+    margin-right: 0.3em;
+}
+
+.dropdown-item>strong {
+    font-size: 1.2em;
+}
+
+.dropdown-item {
+    border-bottom: 2px solid var(--colorOscuro);
+    margin-top: 2px;
+    padding: 5px;
+}
+
+.dropdown-item:hover {
+    background-color: var(--fondoSec);
+}
+
+.dropdown-menu {
+    border: 2px solid var(--colorOscuro);
+    padding: 0;
 }
 
 /*Modal login-registro*/
@@ -249,7 +303,7 @@ form>.modal-footer {
 .addHorario {
     display: block;
     margin: auto;
-    width: 70%;
+    width: 80%;
     height: auto;
 }
 
@@ -625,7 +679,7 @@ a.fc-timegrid-event {
 
     .fc .fc-button-group>.fc-button {
         width: 90%;
-        margin: 0.3rem auto;
+        margin-bottom: 0.3rem;
     }
 }
 

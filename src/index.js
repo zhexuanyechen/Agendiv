@@ -22,6 +22,9 @@ import {
 } from "firebase/auth";
 
 import Modal from 'bootstrap/js/dist/modal';
+import {
+    Dropdown
+} from 'bootstrap';
 
 import {
     Calendar
@@ -32,6 +35,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import momentPlugin from '@fullcalendar/moment';
 import esLocale from '@fullcalendar/core/locales/es';
+
 
 /*Inicializacion */
 const firebaseConfig = {
@@ -55,6 +59,7 @@ const authForm = document.getElementById("authForm");
 const modalAdd = new Modal(document.getElementById("modalAdd"));
 const tituloModalAdd = document.getElementById("tituloModalAdd");
 const contenidoModalAdd = document.getElementById("contenidoModalAdd");
+const dropDown = new Dropdown(document.getElementById("dropdownFoto"))
 
 /*Containers */
 const btnContainer = document.getElementById("btnContainerMid");
@@ -71,6 +76,7 @@ const btnDerDia = document.getElementById("btnDerDia");
 const btnSemanaH = document.getElementById("btnsemanaH");
 const logoutButton = document.getElementById('logout');
 const btnAjustes = document.getElementById('ajustes');
+const btnCambiarFoto = document.getElementById('cambiarFoto');
 
 /*Tablas*/
 const tablaHorarioSemana = document.getElementById("tablaHorarioSemana");
@@ -220,6 +226,10 @@ btnDerDia.addEventListener("click", () => {
     diaSemana++;
     imprimirTablaDiaH(diaSemana);
 });
+
+btnCambiarFoto.addEventListener('click', () => {
+    showCamera();
+})
 
 function imprimirLoginForm() {
     authForm.innerHTML = `
@@ -606,7 +616,7 @@ function getArrayCalendario(array) {
 
 async function addEventoCal(fechaclikada, contador) {
     let seleccionado = document.querySelector("input[name='opcionCalendario']:checked");
-    let hora = 2 * contador;
+    let hora = 3 * contador;
     if (seleccionado) {
         let eventoAux = arrayPictosCalendario.find(event => event.nombre == seleccionado.value);
         let eventoAdd = {
@@ -710,7 +720,6 @@ function getDiaHorario(colnum) {
 }
 
 /*Calendario*/
-
 let calendar = new Calendar(calendario, {
     plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, momentPlugin],
     headerToolbar: {
@@ -731,7 +740,6 @@ let calendar = new Calendar(calendario, {
     editable: false,
     contentHeight: "auto",
     navLinks: true,
-    slotMinTime: "08:00:00",
     eventDurationEditable: false,
     dayMaxEventRows: true,
     views: {
@@ -806,7 +814,7 @@ let calendar = new Calendar(calendario, {
         imprimirModalAddCalendario(fechaCalClickada, contadorEventos);
         modalAdd.show();
     },
-    defaultTimedEventDuration: '2:00',
+    defaultTimedEventDuration: '3:00',
     dayHeaderFormat: {
         weekday: 'short'
     },
@@ -837,14 +845,14 @@ function showAjustes() {
         <label class="form-check-label" for="horasHorarioSi">SI</label>
         </div>
         <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" id="horasHorarioNo" name="verHoras" value="horasNo">
+        <input class="form-check-input" type="radio" id="horasHorarioNo" name="verHoras" value="horasNo" checked>
         <label class="form-check-label" for="horasHorarioNo">NO</label>
         </div>
     </div>
     <h3 class="ajustesTitle">Ver pictogramas</h3>
     <div class="mb-2">
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="pictogramasSi" name="verPictogramas" value="pictosSi">
+            <input class="form-check-input" type="radio" id="pictogramasSi" name="verPictogramas" value="pictosSi" checked>
             <label class="form-check-label" for="pictogramasSi"><img class="imgAjustes" src="./pictogramas/pictograms.png"></label>
         </div>
         <div class="form-check form-check-inline">
@@ -880,18 +888,15 @@ function ajustesLocal() {
 }
 
 function showHideHoras() {
-    let verHoras;
-    if (localStorage.getItem("verHoras") === null) {
-        verHoras = "horasNo"
-    } else {
-        verHoras = localStorage.getItem("verHoras");
-    }
-    if (verHoras === "horasNo") {
+    let verHoras = localStorage.getItem("verHoras");
+    if (verHoras === null || verHoras === "horasNo") {
+        verHoras = "horasNo";
         document.querySelectorAll(".horasAjuste").forEach(celda => {
             celda.style.display = "none";
         });
         document.querySelector(".colHorario").style.display = "none";
-    } else if (verHoras === "horasSi") {
+    } else {
+        verHoras = localStorage.getItem("verHoras");
         document.querySelectorAll(".horasAjuste").forEach(celda => {
             celda.style.display = null;
         });
@@ -900,20 +905,16 @@ function showHideHoras() {
 }
 
 function showHidePictos() {
-    let verPictos;
-    if (localStorage.getItem("verPictos") === null) {
-        verPictos = "pictosNo"
+    let verPictos = localStorage.getItem("verPictos");
+    if (verPictos === null || verPictos === "pictosNo") {
+        verPictos = "pictosNo";
+        document.querySelectorAll(".dibujoHorario").forEach(celda => {
+            celda.style.display = "none";
+        });
+        document.querySelectorAll(".textPicto").forEach(celda => {
+            celda.style.display = "block";
+        });
     } else {
-        verPictos = localStorage.getItem("verPictos");
-    }
-    if (verPictos === "pictosNo") {
-        document.querySelectorAll(".dibujoHorario").forEach(celda => {
-            celda.style.display = "none";
-        });
-        document.querySelectorAll(".textPicto").forEach(celda => {
-            celda.style.display = "block";
-        });
-    } else if (verPictos === "pictosSi") {
         document.querySelectorAll(".dibujoHorario").forEach(celda => {
             celda.style.display = "block";
         });
@@ -921,4 +922,42 @@ function showHidePictos() {
             celda.style.display = "none";
         });
     }
+}
+
+/**Camara */
+
+function showCamera() {
+    contenidoModalAdd.innerHTML = '';
+    tituloModalAdd.innerHTML = '<i class="fa-solid fa-camera"></i>Cambiar foto';
+    let div = document.createElement('div');
+    div.classList.add("row", "row-cols-2", "mb-2", "justify-content-around");
+    div.innerHTML = `
+        <button type='button' id="elegirFotoBtn" class="btn btnFotoCamera col-5"><img src="./pictogramas/pictograms.png">Elegir Foto</button>
+        <input type="file" id="elegirFoto" accept="image/*" class="" style="display: none;">
+        <button type='button' id="hacerFotoBtn" class="btn btnFotoCamera col-5"><img src="./pictogramas/camera.png">Hacer Foto</button>
+        <input type="file" id="hacerFoto" accept="image/*" capture="user" class="" style="display: none;">
+        <div class="modal-footer d-flex flex-row justify-content-start footerCamara">
+            <button type="button" class="btnRojo" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i>Cancelar</button>
+        </div>`;
+    contenidoModalAdd.append(div);
+    document.getElementById("elegirFotoBtn").addEventListener("click", elegirFoto);
+    document.getElementById("elegirFoto").addEventListener("change", subirFoto, false);
+    document.getElementById("hacerFotoBtn").addEventListener("click", hacerFoto);
+    document.getElementById("hacerFoto").addEventListener("change", subirFoto, false);
+    modalAdd.show();
+}
+
+function elegirFoto() {
+    let inputFoto = document.getElementById("elegirFoto")
+    inputFoto.click();
+}
+
+function hacerFoto() {
+    let inputFoto = document.getElementById("hacerFoto");
+    inputFoto.click();
+}
+
+function subirFoto() {
+    let files = this.files;
+    console.log(files);
 }

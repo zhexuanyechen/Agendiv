@@ -43,20 +43,22 @@
     <div class="container-lg contenedor mt-3">
         <div id="btnContainerTop" class="d-flex justify-content-between mt-3">
             <div>
-                <button type="button" class="volver btn btnVolver btnSecundarios"><img
-                        src="./pictogramas/back.png"></button>
+                <button type="button" class="volver btn btnVolver"><img src="./pictogramas/back.png"></button>
             </div>
-            <div class="dropdown">
-                <button type="button" id="foto" class="btn btnSecundarios dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-expanded="false"><img src="./pictogramas/user.png"></button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><button class="dropdown-item"><img src="./pictogramas/user.png">Ver Perfil</button></li>
-                    <li><button class="dropdown-item"><img src="./pictogramas/camera.png">Cambiar foto</button></li>
+            <div class="btn-group dropend">
+                <button type="button" id="dropdownFoto" class="btn" data-bs-toggle="dropdown"><img
+                        src="./pictogramas/user.png"><i class="fa-solid fa-caret-down"></i></button>
+                <ul class="dropdown-menu">
+                    <li><button type="button" id="cambiarFoto" class="btn dropdown-item"><img
+                                src="./pictogramas/camera.png">
+                            <strong>Cambiar foto</strong>
+                        </button></li>
+                    <li><button type="button" id="ajustes" class="btn dropdown-item"><img src="./pictogramas/gear.png">
+                            <strong>Ajustes</strong>
+                        </button></li>
                 </ul>
             </div>
             <div>
-                <button type="button" id="ajustes" class="btn ajustesBtn btnSecundarios"><img
-                        src="./pictogramas/gear.png"></button>
                 <button type="button" id="logout" class="btn  btnRojo mt-3"><i class="fa-solid fa-user-xmark"></i>Cerrar
                     sesión</button>
             </div>
@@ -97,8 +99,7 @@
         </div>
 
         <div id="btnContainerBot" class="mt-2 mb-2">
-            <button type="button" class="volver btn btnVolver btnSecundarios"><img
-                    src="./pictogramas/back.png"></button>
+            <button type="button" class="volver btn btnVolver"><img src="./pictogramas/back.png"></button>
         </div>
     </div>
     <script src="index.js"></script>
