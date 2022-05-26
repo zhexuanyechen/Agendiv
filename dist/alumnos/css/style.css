@@ -333,7 +333,7 @@ form>.modal-footer {
 }
 
 #tablaHorarioDia {
-    width: 65%;
+    width: 55%;
     margin: auto;
     border: 3px solid var(--colorOscuro);
 }
@@ -350,7 +350,7 @@ form>.modal-footer {
 #tablaHorarioDia .dibujoHorario,
 #tablaHorarioDia .addHorario {
     min-width: 0;
-    max-width: 50%;
+    max-width: 45%;
 }
 
 .tablaHorario th.miercoles {
@@ -534,7 +534,7 @@ input[type=radio]:active+.imgLabel {
 }
 
 .fc .fc-daygrid-day.fc-day-today {
-    border: 4px solid #0049FF;
+    border: 4px solid red;
     font-weight: bold;
     background-color: var(--fondoApp);
 }
