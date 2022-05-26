@@ -21,6 +21,13 @@ import {
     signOut,
 } from "firebase/auth";
 
+import {
+    getStorage,
+    ref,
+    getDownloadURL,
+    uploadBytesResumable
+} from "firebase/storage";
+
 import Modal from 'bootstrap/js/dist/modal';
 import {
     Dropdown
@@ -51,6 +58,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 /*Modales */
 const modalAuth = new Modal(document.getElementById("modalAuth"));
@@ -148,6 +156,7 @@ onAuthStateChanged(auth, (usuario) => {
                 alumData = doc.data();
                 arrayCalendario = getArrayCalendario(alumData.calendario);
                 getHorario(alumData);
+                document.getElementById("userFoto").src = alumData.foto;
             }, (error) => {
                 console.log(error.message);
             });
@@ -291,7 +300,7 @@ function signup() {
             setDoc(doc(db, 'alumnos', userId), {
                 nombre: nombreUser,
                 apellidos: apellidosUser,
-                foto: "",
+                foto: "./pictogramas/user.png",
                 lun: arrayVacío,
                 mar: arrayVacío,
                 mier: arrayVacío,
@@ -925,7 +934,6 @@ function showHidePictos() {
 }
 
 /**Camara */
-
 function showCamera() {
     contenidoModalAdd.innerHTML = '';
     tituloModalAdd.innerHTML = '<i class="fa-solid fa-camera"></i>Cambiar foto';
@@ -957,7 +965,50 @@ function hacerFoto() {
     inputFoto.click();
 }
 
-function subirFoto() {
-    let files = this.files;
-    console.log(files);
+async function subirFoto() {
+    let foto = this.files[0];
+    let fotoName = foto.name;
+    console.log(foto);
+    const fotoRef = ref(storage, '/fotosAlumnos/' + fotoName);
+    uploadImage(fotoRef, foto).then((imgUrl) => {
+        updateDoc(alumnoRef, {
+            foto: imgUrl
+        }).then(() => {
+            document.getElementById("userFoto").src = imgUrl;
+            modalAdd.hide();
+        }).catch((error) => {
+            console.log(error);
+        })
+    })
+}
+
+function uploadImage(pathRef, foto) {
+    const fotosAlumnosRef = ref(storage, pathRef);
+    const uploadImage = uploadBytesResumable(fotosAlumnosRef, foto);
+
+    return new Promise((resolve, reject) => {
+        uploadImage.on('state_changed', (snapshot) => {
+            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+                case 'paused':
+                    console.log('Upload is paused');
+                    break;
+                case 'running':
+                    console.log('Upload is running');
+                    break;
+            }
+        }, (error) => {
+            console.log(error);
+            reject(error);
+        }, async () => {
+            try {
+                const imgURL = await getDownloadURL(uploadImage.snapshot.ref);
+                console.log(imgURL);
+                resolve(imgURL);
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    });
 }

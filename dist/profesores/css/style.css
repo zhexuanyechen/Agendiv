@@ -181,6 +181,7 @@ form>.modal-footer {
     display: block;
     margin-left: auto;
     margin-right: 0.2em;
+    width: 40%;
 }
 
 /*Horario*/

@@ -270,8 +270,7 @@ async function uploadInputImageHorario() {
         uploadImage(pictosHorarioRef).then((imgUrl) => {
             addDoc(collection(db, 'pictosHorario'), {
                 nombre: imageName.split(".", 1)[0],
-                foto: imgUrl,
-                audio: "prueba"
+                foto: imgUrl
             }).then(() => {
                 uploadImgForm.reset();
                 confirmarUpdatePicto(imageName)
@@ -294,9 +293,9 @@ async function uploadInputImageCalendario() {
             }).then(() => {
                 uploadImgForm.reset();
                 confirmarUpdatePicto(imageName);
-            }).catch((error => {
+            }).catch((error) => {
                 console.log(error);
-            }));
+            });
         })
     }
 }

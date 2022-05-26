@@ -67,7 +67,8 @@ i {
 
 /*Botones atrás-ajustes*/
 .ajustesBtn,
-.btnVolver {
+.btnVolver,
+.dropdownFoto {
     border: none;
     background-color: var(--fondoApp);
     padding: 0;
@@ -78,6 +79,11 @@ i {
     margin: auto;
     width: 74px;
     filter: drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.35));
+}
+
+#userFoto {
+    border-radius: 25px;
+    width: 85px;
 }
 
 .btnFotoCamera>img {
@@ -106,7 +112,7 @@ i {
 }
 
 .footerCamara>button {
-    width: 40%;
+    width: 50%;
 }
 
 .ajustesBtn:hover>img,
@@ -132,7 +138,8 @@ i {
     padding: 5px;
 }
 
-.dropdown-item:hover {
+.dropdown-item:hover,
+.dropdown-item:focus {
     background-color: var(--fondoSec);
 }
 
@@ -680,6 +687,19 @@ a.fc-timegrid-event {
     .fc .fc-button-group>.fc-button {
         width: 90%;
         margin-bottom: 0.3rem;
+    }
+
+    .horasAjuste>p {
+        font-size: 0.9em;
+    }
+
+    #userFoto,
+    .btnVolver>img {
+        width: 60px;
+    }
+
+    #logout {
+        font-size: 0.9em;
     }
 }
 
