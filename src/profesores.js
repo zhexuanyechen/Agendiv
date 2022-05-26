@@ -6,10 +6,8 @@ import {
     getFirestore,
     query,
     doc,
-    getDoc,
     onSnapshot,
     collection,
-    getDocs,
     updateDoc,
     deleteDoc,
     addDoc,
@@ -342,6 +340,7 @@ try {
 
     let queryH = query(collection(db, "pictosHorario"));
     pictosHListener = onSnapshot(queryH, (pictosHorarioSnapshot) => {
+        arrayPictosHorario = [];
         pictosHorarioSnapshot.forEach((doc) => {
             let pictoData = doc.data();
             pictoData.id = doc.id;
@@ -352,6 +351,7 @@ try {
 
     let queryC = query(collection(db, "pictosCalendario"));
     pictosCListener = onSnapshot(queryC, (pictosCalendarioSnapshot) => {
+        arrayPictosCalendario = [];
         pictosCalendarioSnapshot.forEach((doc) => {
             let pictoData = doc.data();
             pictoData.id = doc.id;
@@ -387,8 +387,8 @@ function imprimirListaPictos(title, array, lista) {
     listTitle.innerText = title;
     let div = document.createElement('div');
     div.innerHTML = readEventos(array);
-    lista.append(listTitle);
-    lista.append(div);
+    lista.innerHTML = "";
+    lista.append(listTitle, div);
     let btnsEliminarAct = document.querySelectorAll(".btnBorrarAct");
     btnsEliminarAct.forEach((btn) => {
         btn.addEventListener("click", function () {
@@ -419,6 +419,7 @@ async function borrarActividad(actividadId, tipo) {
     let title = 'Eliminar Pictograma';
     let deleteIndex = arrayPictosHorario.findIndex(picto => picto.id == actividadId);
     try {
+        document.getElementById(actividadId).style.display = 'none';
         if (tipo === "listaPictosHor") {
             await deleteDoc(doc(db, 'pictosHorario', actividadId));
             arrayPictosHorario.splice(deleteIndex, 1);
@@ -426,7 +427,6 @@ async function borrarActividad(actividadId, tipo) {
             await deleteDoc(doc(db, 'pictosCalendario', actividadId));
             arrayPictosHorario.splice(deleteIndex, 1);
         }
-        document.getElementById(actividadId).style.display = 'none';
         let text = "Se ha borrado al pictograma con id" + actividadId;
         showConfirmacion(title, text);
     } catch (e) {

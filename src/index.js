@@ -243,8 +243,8 @@ btnCambiarFoto.addEventListener('click', () => {
 function imprimirLoginForm() {
     authForm.innerHTML = `
         <div class="mb-2 form-group">
-            <label for="usuario" class="form-label"><i class="fa-solid fa-at"></i>Correo electrónico</label>
-            <input type="text" class="form-control" placeholder="Correo electrónico" id="usuario" required>
+            <label for="usuario" class="form-label"><i class="fa-solid fa-user"></i>Usuario</label>
+            <input type="text" class="form-control" placeholder="Usuario" id="usuario" required>
         </div>
         <div class="mb-2 form-group">
             <label for="pwd" class="form-label"><i class="fa-solid fa-lock"></i>Contraseña</label>
@@ -268,7 +268,7 @@ function imprimirLoginForm() {
 }
 
 function login() {
-    let usuario = document.getElementById("usuario").value;
+    let usuario = document.getElementById("usuario").value + '@gmail.com';
     let pwd = document.getElementById("pwd").value;
     let errorMessage = document.querySelector(".errorMessage");
 
@@ -285,7 +285,7 @@ function login() {
 
 function signup() {
     let numHoras = getAjustesNumHoras();
-    let usuario = document.getElementById("usuario").value;
+    let usuario = document.getElementById("usuario").value + '@gmail.com';
     let pwd = document.getElementById("pwd").value;
     let errorMessage = document.querySelector(".errorMessage");
     let nombreUser = document.getElementById("nombre").value;
@@ -324,13 +324,16 @@ function imprimirSignupForm() {
               <input type="text" class="form-control" placeholder="Nombre" id="nombre" required>
             </div>
             <div class="col-6">
-              <label for="apellidos" class="form-label"><i class="fa-solid fa-id-card"></i>Apellidos</label>
+              <label for="apellidos" class="form-label"><i class="fa-regular fa-id-card"></i>Apellidos</label>
               <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" required>
             </div>
         </div>
         <div class="mb-2 form-group">
             <label for="usuario" class="form-label"><i class="fa-solid fa-at"></i>Correo electrónico</label>
+            <div class='input-group'>
             <input type="text" class="form-control" placeholder="Correo electrónico" id="usuario" required>
+            <span class="input-group-text">@gmail.com</span>
+            </div>
         </div>
         <div class="mb-2 form-group">
             <label for="pwd" class="form-label"><i class="fa-solid fa-lock"></i>Contraseña</label>
