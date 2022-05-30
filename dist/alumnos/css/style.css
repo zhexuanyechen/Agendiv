@@ -10,7 +10,7 @@
     --colorViernes: #dac8d7;
     --colorSab: #ee8d8d;
     --colorDom: #ee8d8d;
-    --tamLetra: 1.2rem;
+    --tamLetra: 1.3rem;
     --displayHoras: cell;
 }
 
@@ -65,7 +65,45 @@ i {
     font-weight: bolder;
 }
 
-/*Botones atrás-ajustes*/
+/*Botones aceptar-rechazar*/
+.btnVerde,
+.btnRojo {
+    border-radius: 4px;
+    font-weight: bold;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.30);
+    font-size: 1.2em;
+}
+
+.btnVerde {
+    border: 3px solid #2a8156;
+    background-color: #d8f3e5;
+}
+
+.btnVerde:hover,
+.btnVerde:focus {
+    background-color: #81daac;
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+.btnRojo {
+    border: 3px solid #e60000;
+    background-color: #fcc1c1;
+}
+
+.btnRojo:hover,
+.btnRojo:focus {
+    background-color: #f89595;
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+.btnVerde>img,
+.btnRojo>img {
+    width: 80px;
+    margin-right: 0.35em;
+    display: inline-block;
+}
+
+/*Cabecera+ajustes*/
 .ajustesBtn,
 .btnVolver,
 .dropdownFoto {
@@ -84,6 +122,16 @@ i {
 #userFoto {
     border-radius: 25px;
     width: 85px;
+    padding: 0;
+    max-height: 105px;
+}
+
+#logout>img {
+    width: 64px;
+}
+
+#dropdownFoto {
+    padding: 0;
 }
 
 .btnFotoCamera>img {
@@ -174,10 +222,17 @@ i {
     font-weight: bold;
 }
 
+.form-label>img,
+h3>img {
+    width: 80px;
+    margin-right: 0.35em;
+}
+
 .form-control {
     border: 1px solid var(--colorOscuro);
     border-radius: 4px;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 #enlaceaSignup {
@@ -213,37 +268,6 @@ form>.modal-footer {
     color: red;
     font-size: 0.8em;
     margin-bottom: 0.75em;
-}
-
-/*Botones aceptar-rechazar*/
-.btnVerde,
-.btnRojo {
-    border-radius: 4px;
-    font-weight: bold;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.30);
-    font-size: 1.2em;
-}
-
-.btnVerde {
-    border: 3px solid #2a8156;
-    background-color: #d8f3e5;
-}
-
-.btnVerde:hover,
-.btnVerde:focus {
-    background-color: #81daac;
-    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
-}
-
-.btnRojo {
-    border: 3px solid #e60000;
-    background-color: #fcc1c1;
-}
-
-.btnRojo:hover,
-.btnRojo:focus {
-    background-color: #f89595;
-    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
 }
 
 /*Horario*/
@@ -622,6 +646,21 @@ a.fc-timegrid-event {
 
 }
 
+.fc-button>img {
+    width: 55px;
+    margin-right: 0.2em;
+    display: inline-block;
+}
+
+.fc .fc-button {
+    padding: 0.25em 0.15em;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.5em;
+    margin-bottom: 0.2em;
+}
+
 /*Ajustes*/
 .ajustesTitle {
     border-bottom: 1px solid black;
@@ -696,6 +735,7 @@ a.fc-timegrid-event {
     #userFoto,
     .btnVolver>img {
         width: 60px;
+        max-height: 80px;
     }
 
     #logout {

@@ -243,20 +243,19 @@ btnCambiarFoto.addEventListener('click', () => {
 function imprimirLoginForm() {
     authForm.innerHTML = `
         <div class="mb-2 form-group">
-            <label for="usuario" class="form-label"><i class="fa-solid fa-user"></i>Usuario</label>
+            <label for="usuario" class="form-label"><img src="./pictogramas/niño.png">Usuario</label>
             <input type="text" class="form-control" placeholder="Usuario" id="usuario" required>
         </div>
         <div class="mb-2 form-group">
-            <label for="pwd" class="form-label"><i class="fa-solid fa-lock"></i>Contraseña</label>
+            <label for="pwd" class="form-label"><img src="./pictogramas/contraseña.png">Contraseña</label>
             <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
         </div>
-        <div class="modal-footer row align-items-start">
+        <div class="modal-footer row align-items-start justify-content-around">
             <p id="enlaceaSignup" class="col-md-5" tabindex="0">No tienes cuenta? Registrate aquí</p>
-            <button type="button" id="login" class="botonA btnVerde col-md-5"><i class="fa-solid fa-right-to-bracket"></i>Inicio
-              sesión</button>
+            <button type="button" id="login" class="botonA btnVerde col-md-5"><img src="./pictogramas/entrar.png">Entrar</button>
         </div>
         <p class="errorMessage text-center"></p>`;
-    tituloModalAuth.innerText = "Iniciar Sesión";
+    tituloModalAuth.innerHTML = `<img src="./pictogramas/autentificacion.png">Iniciar sesión`;
     document.getElementById("enlaceaSignup").addEventListener("click", imprimirSignupForm);
     document.getElementById("login").addEventListener("click", login);
     let inputLogin = document.querySelectorAll(".loginForm input");
@@ -320,31 +319,31 @@ function imprimirSignupForm() {
     authForm.innerHTML = `
         <div class="mb-2 form-group row gx-3">
             <div class="col-6">
-              <label for="nombre" class="form-label"><i class="fa-regular fa-id-card"></i>Nombre</label>
+              <label for="nombre" class="form-label"><img src="./pictogramas/carnet.png">Nombre</label>
               <input type="text" class="form-control" placeholder="Nombre" id="nombre" required>
             </div>
             <div class="col-6">
-              <label for="apellidos" class="form-label"><i class="fa-regular fa-id-card"></i>Apellidos</label>
+              <label for="apellidos" class="form-label"><img src="./pictogramas/carnet.png">Apellidos</label>
               <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" required>
             </div>
         </div>
         <div class="mb-2 form-group">
-            <label for="usuario" class="form-label"><i class="fa-solid fa-at"></i>Correo electrónico</label>
+            <label for="usuario" class="form-label"><img src="./pictogramas/niño.png">Usuario</label>
             <div class='input-group'>
-            <input type="text" class="form-control" placeholder="Correo electrónico" id="usuario" required>
+            <input type="text" class="form-control" placeholder="Usuario" id="usuario" required>
             <span class="input-group-text">@gmail.com</span>
             </div>
         </div>
         <div class="mb-2 form-group">
-            <label for="pwd" class="form-label"><i class="fa-solid fa-lock"></i>Contraseña</label>
+            <label for="pwd" class="form-label"><img src="./pictogramas/contraseña.png">Contraseña</label>
             <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
         </div>
         <div class="modal-footer row align-items-stretch justify-content-around">
-            <button type="button" id="cancelarSignup" class="botonA btnRojo col-md-5"><i class="fa-solid fa-xmark"></i>Cancelar</button>
-            <button type="button" id="signup" class="botonA btnVerde col-md-5"><i class="fa-solid fa-user-plus"></i>Registrarse</button>
+            <button type="button" id="cancelarSignup" class="botonA btnRojo col-md-5"><img src="./pictogramas/X.png">Cancelar</button>
+            <button type="button" id="signup" class="botonA btnVerde col-md-5"><img src="./pictogramas/entrar.png">Registrarse</button>
         </div>
         <p class="errorMessage text-center"></p>`;
-    tituloModalAuth.innerText = "Registrarse";
+    tituloModalAuth.innerHTML = `<img src="./pictogramas/niño.png">Registrarse`;
     document.getElementById("cancelarSignup").addEventListener("click", imprimirLoginForm);
     document.getElementById("signup").addEventListener("click", signup);
     let inputSignup = document.querySelectorAll(".signupForm input");
@@ -836,6 +835,15 @@ let calendar = new Calendar(calendario, {
 function renderizarCal() {
     calendar.addEventSource(arrayCalendario);
     calendar.render();
+    let imageM = document.createElement("img");
+    imageM.src = "./pictogramas/month.png";
+    document.querySelector(".fc-dayGridMonth-button").prepend(imageM);
+    let imageA = document.createElement("img");
+    imageA.src = "./pictogramas/agenda.png";
+    document.querySelector(".fc-listMonth-button").prepend(imageA);
+    let imageW = document.createElement("img");
+    imageW.src = "./pictogramas/week.png";
+    document.querySelector(".fc-timeGridWeek-button").prepend(imageW);
 }
 
 function generarUID() {
