@@ -34,6 +34,7 @@ i {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 0.2em 1em;
 }
 
 /*Botones índice*/
@@ -45,6 +46,9 @@ i {
     font-size: 1.3em;
     width: 100%;
     height: 100%;
+    max-width: 650px;
+    display: block;
+    margin: 0 auto;
 }
 
 .btnIndex:hover,
@@ -772,5 +776,17 @@ a.fc-timegrid-event {
 
     .fc .fc-col-header-cell-cushion {
         font-size: 0.9em;
+    }
+
+    .fc .fc-button-group>.fc-button {
+        padding: 0.1em;
+        font-size: 0.85em;
+    }
+}
+
+@media (min-width: 825px) and (max-width:975px) {
+    .fc .fc-button-group>.fc-button {
+        padding: 0.1em;
+        font-size: 0.85em;
     }
 }

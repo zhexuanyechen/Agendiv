@@ -340,7 +340,7 @@ function imprimirSignupForm() {
         </div>
         <div class="modal-footer row align-items-stretch justify-content-around">
             <button type="button" id="cancelarSignup" class="botonA btnRojo col-md-5"><i class="fa-solid fa-xmark"></i>Cancelar</button>
-            <button type="button" id="signup" class="botonA btnVerde col-md-5"><i class="fa-solid fa-right-to-bracket"></i>Registrar</button>
+            <button type="button" id="signup" class="botonA btnVerde col-md-5"><i class="fa-solid fa-right-to-bracket"></i>Registrarse</button>
         </div>
         <p class="errorMessage text-center"></p>`;
     tituloModalAuth.innerHTML = `<img src="./pictogramas/autentificacion.png">Registrarse`;
