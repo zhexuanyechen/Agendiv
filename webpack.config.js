@@ -1,4 +1,5 @@
 const path = require('path');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 var config = {
     mode: 'development',
@@ -19,12 +20,23 @@ var configAlum = Object.assign({}, config, {
     module: {
         rules: [{
             test: /\.css$/,
-            use: [
-                'style-loader',
-                'css-loader'
+            use: [{
+                    loader: MiniCssExtractPlugin.loader
+                },
+                {
+                    loader: 'css-loader',
+                    options: {
+                        importLoaders: 1
+                    }
+                }
             ]
         }]
-    }
+    },
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: 'main.css'
+        })
+    ]
 });
 
 var configProf = Object.assign({}, config, {

@@ -95,6 +95,7 @@ let userId = "";
 let alumnoRef, alumData;
 let arrayAsignaturas = [];
 let arrayCalendario = [];
+let iconsRendered = false;
 
 let unsubscribe;
 let diaSemana = new Date().getDay();
@@ -293,13 +294,12 @@ function signup() {
     createUserWithEmailAndPassword(auth, usuario, pwd)
         .then(cred => {
             userId = cred.user.uid;
-            console.log('user created:', userId);
             authForm.reset();
             modalAuth.hide();
             setDoc(doc(db, 'alumnos', userId), {
                 nombre: nombreUser,
                 apellidos: apellidosUser,
-                foto: "./pictogramas/user.png",
+                foto: "./pictogramas/profile_photo.png",
                 lun: arrayVacío,
                 mar: arrayVacío,
                 mier: arrayVacío,
@@ -307,7 +307,7 @@ function signup() {
                 vie: arrayVacío,
                 calendario: []
             }).then(() => {
-
+                console.log('user created:', userId);
             });
         }).catch(err => {
             console.log(err.message);
@@ -319,11 +319,11 @@ function imprimirSignupForm() {
     authForm.innerHTML = `
         <div class="mb-2 form-group row gx-3">
             <div class="col-6">
-              <label for="nombre" class="form-label"><img src="./pictogramas/carnet.png">Nombre</label>
+              <label for="nombre" class="form-label"><img src="./pictogramas/name.png">Nombre</label>
               <input type="text" class="form-control" placeholder="Nombre" id="nombre" required>
             </div>
             <div class="col-6">
-              <label for="apellidos" class="form-label"><img src="./pictogramas/carnet.png">Apellidos</label>
+              <label for="apellidos" class="form-label"><img src="./pictogramas/last_name.png">Apellidos</label>
               <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" required>
             </div>
         </div>
@@ -339,11 +339,11 @@ function imprimirSignupForm() {
             <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
         </div>
         <div class="modal-footer row align-items-stretch justify-content-around">
-            <button type="button" id="cancelarSignup" class="botonA btnRojo col-md-5"><img src="./pictogramas/X.png">Cancelar</button>
-            <button type="button" id="signup" class="botonA btnVerde col-md-5"><img src="./pictogramas/entrar.png">Registrarse</button>
+            <button type="button" id="cancelarSignup" class="botonA btnRojo col-md-5"><i class="fa-solid fa-xmark"></i>Cancelar</button>
+            <button type="button" id="signup" class="botonA btnVerde col-md-5"><i class="fa-solid fa-right-to-bracket"></i>Registrar</button>
         </div>
         <p class="errorMessage text-center"></p>`;
-    tituloModalAuth.innerHTML = `<img src="./pictogramas/niño.png">Registrarse`;
+    tituloModalAuth.innerHTML = `<img src="./pictogramas/autentificacion.png">Registrarse`;
     document.getElementById("cancelarSignup").addEventListener("click", imprimirLoginForm);
     document.getElementById("signup").addEventListener("click", signup);
     let inputSignup = document.querySelectorAll(".signupForm input");
@@ -364,8 +364,8 @@ function catchMensajeError(error) {
         mensaje = "La contraseña no son correctos."
     } else if (error === 'auth/weak-password') {
         mensaje = "La contraseña debe tener mínimo 6 caracteres."
-    } else if (error === 'auth/email-already-exists') {
-        mensaje = "Ya existe una cuenta con este correo."
+    } else if (error === 'auth/email-already-in-use') {
+        mensaje = "Ya existe este usuario, por favor elige otro nombre."
     } else {
         mensaje = "Error inesperado."
     }
@@ -455,9 +455,9 @@ function funcionCelda() {
     if (lastChild.innerText != "+") {
         imprimirModalInterHorario();
     } else {
-        imprimirModalAddHorario();
+        let text = `<i class="fas fa-plus"></i>Añadir`;
+        imprimirModalAddHorario(text);
     }
-    modalAdd.show();
 }
 
 /*Imprimir modal */
@@ -480,6 +480,7 @@ function imprimirModalIntermedio(title, editBtnFun, deleteBtnFun) {
         editBtnFun(text);
     });
     btnBorrar.addEventListener("click", deleteBtnFun);
+    modalAdd.show();
 }
 
 function imprimirModalInterHorario() {
@@ -487,37 +488,43 @@ function imprimirModalInterHorario() {
     imprimirModalIntermedio(title, imprimirModalAddHorario, deleteAsignatura);
 }
 
-function imprimirModalInterCalendario(eventId) {
+function imprimirModalInterCalendario(eventInfo) {
     let title = "¿Quieres cambiar o borrar un evento?";
+    let eventId = eventInfo.event.id;
+    console.log(eventInfo.event);
     let deleteBtnFun = () => {
         deleteEventoCal(eventId);
     }
-    imprimirModalIntermedio(title, imprimirModalAddCalendario, deleteBtnFun);
+    let cambiarFun = () => {
+        changeEventoCal(eventId);
+    }
+    let cambiarBtnFun = () => {
+        let text = `<i class="fas fa-edit"></i>Cambiar`;
+        imprimirModalAdd(text, cambiarFun, cargarEventosModal);
+    }
+    imprimirModalIntermedio(title, cambiarBtnFun, deleteBtnFun);
 }
 
-function imprimirModalAdd(text, addBtnFun, carga) {
+function imprimirModalAdd(btnText, addBtnFun, carga) {
     contenidoModalAdd.innerHTML = "";
-    tituloModalAdd.innerText = "Qué quieres poner?";
-    let btnScrollDiv = document.createElement("div");
-    btnScrollDiv.classList.add("btnScroll", "d-flex", "flex-row", "justify-content-around");
+    tituloModalAdd.innerText = "¿Qué quieres añadir?";
     let btnScrollUp = document.createElement("button");
+    let btnScrollDown = document.createElement("button");
+    let addForm = document.createElement("form");
+
     btnScrollUp.classList.add("btn", "scrollBtnUp");
     btnScrollUp.innerHTML = `<i class="far fa-arrow-alt-circle-up"></i>Subir`
     btnScrollUp.addEventListener('click', () => {
         addForm.scrollTop -= 100;
     });
-    let btnScrollDown = document.createElement("button");
     btnScrollDown.classList.add("btn", "scrollBtnDown");
     btnScrollDown.innerHTML = `<i class="far fa-arrow-alt-circle-down"></i>Bajar`;
     btnScrollDown.addEventListener('click', () => {
         addForm.scrollTop += 100;
     });
-    btnScrollDiv.append(btnScrollDown, btnScrollUp);
-    let btnScrollDivClone = btnScrollDiv.cloneNode(true);
-    let addForm = document.createElement("form");
     addForm.id = "addForm";
     addForm.classList.add("row", "row-cols-2", "justify-content-around");
-    contenidoModalAdd.append(btnScrollDiv, addForm, btnScrollDivClone);
+    contenidoModalAdd.append(btnScrollUp, addForm, btnScrollDown);
     carga();
     let btnModalDiv = document.createElement("div");
     btnModalDiv.classList.add("modal-footer", "row", "row-col-2", "align-items-stretch", "justify-content-around");
@@ -527,24 +534,62 @@ function imprimirModalAdd(text, addBtnFun, carga) {
     btnCancelar.innerHTML = `<i class="fa-solid fa-xmark"></i>Cancelar</button>`;
     let btnAdd = document.createElement("button");
     btnAdd.classList.add("btn", "btnVerde", "col-5");
-    btnAdd.innerHTML = `${text}`;
+    btnAdd.disabled = true;
+    btnAdd.innerHTML = `${btnText}`;
     btnModalDiv.append(btnCancelar, btnAdd);
     contenidoModalAdd.append(btnModalDiv);
     btnAdd.addEventListener("click", addBtnFun);
-    document.querySelectorAll("input[name='opcionHorario']").forEach((option) => {
-        option.addEventListener('click', function () {
-            this.parentElement.style.borderColor = 'red';
-        });
+    let prev = null;
+    addForm.addEventListener('change', function (e) {
+        if (e.target.name === 'opcionCalendario' || e.target.name === 'opcionHorario') {
+            e.target.parentElement.style.borderColor = "red";
+            if (prev === null) {
+                prev = e.target.parentElement;
+            } else if (prev !== e.target) {
+                prev.style.borderColor = '#2c2c2c';
+                prev = e.target.parentElement;
+            }
+            btnAdd.disabled = false;
+        }
+    });
+    modalAdd.show();
+    addForm.scrollTop = 0;
+    btnScrollUp.disabled = true;
+    scroll(addForm, btnScrollUp, btnScrollDown);
+    isOverflown(addForm);
+}
+
+function scroll(form, btnUp, btnDown) {
+    form.addEventListener('scroll', function () {
+        console.log(addForm.scrollTop);
+        if (Math.floor(addForm.scrollTop) === 0)
+            btnUp.disabled = true;
+        else
+            btnUp.disabled = false;
+        if (Math.abs(form.scrollHeight - form.clientHeight - form.scrollTop) < 1) {
+            btnDown.disabled = true;
+        } else {
+            btnDown.disabled = false;
+        }
     });
 }
 
-function imprimirModalAddHorario() {
-    let text = `<i class="fas fa-plus"></i>Añadir`;
+function isOverflown(form) {
+    console.log(form.scrollHeight < form.clientHeight)
+    if (form.scrollHeight <= form.clientHeight) {
+        document.querySelector('.scrollBtnDown').style.display = 'none';
+        document.querySelector('.scrollBtnUp').style.display = 'none';
+    } else {
+        document.querySelector('.scrollBtnDown').style.display = 'block';
+        document.querySelector('.scrollBtnUp').style.display = 'block';
+    }
+}
+
+function imprimirModalAddHorario(text) {
     imprimirModalAdd(text, addAsignatura, cargarAsignaturasModal);
 }
 
-function imprimirModalAddCalendario(fechaCalClickada, contador) {
-    let text = `<i class="fas fa-plus"></i>Añadir`;
+function imprimirModalAddCalendario(fechaCalClickada, contador, text) {
     let addEventFun = () => {
         addEventoCal(fechaCalClickada, contador);
     }
@@ -559,7 +604,7 @@ function cargarAsignaturasModal() {
                   <div class="dibujoInput"><input type="radio" name="opcionHorario" id="${arrayPictosHorario[i].id}" value="${arrayPictosHorario[i].nombre}">
                     <label for="${arrayPictosHorario[i].id}" class="imgLabel"><img src="${arrayPictosHorario[i].foto}"class="rounded dibujo-cc"></label>
                   </div>
-                </div>`
+                </div>`;
     }
     document.getElementById("addForm").innerHTML = html;
 }
@@ -650,8 +695,29 @@ async function addEventoCal(fechaclikada, contador) {
     }
 }
 
+async function changeEventoCal(eventId) {
+    let seleccionado = document.querySelector("input[name='opcionCalendario']:checked");
+    if (seleccionado) {
+        let eventoAux = arrayPictosCalendario.find(event => event.nombre === seleccionado.value);
+        let indexAnterior = arrayCalendario.findIndex(evento => evento.id === eventId);
+        arrayCalendario[indexAnterior].title = eventoAux.nombre;
+        arrayCalendario[indexAnterior].image_url = eventoAux.foto;
+        console.log(calendar.getEvents());
+        try {
+            await updateDoc(alumnoRef, {
+                calendario: arrayCalendario
+            });
+        } catch (e) {
+            console.log(e);
+        }
+        let eventoAnterior = calendar.getEventById(eventId);
+        eventoAnterior.setProp("title", eventoAux.nombre);
+        eventoAnterior.setExtendedProp("image_url", eventoAux.foto);
+        modalAdd.hide();
+    };
+}
+
 async function deleteEventoCal(eventId) {
-    console.log(eventId);
     let indexDel = arrayCalendario.findIndex(evento => evento.id === eventId);
     if (indexDel != -1) {
         arrayCalendario.splice(indexDel, 1);
@@ -757,15 +823,12 @@ let calendar = new Calendar(calendario, {
         dayGridMonth: {
             dayMaxEventRows: 2,
             stickyHeaderDates: false,
-            titleFormat: function () {
-                let date = new Date();
-                var options = {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                };
-                return date.toLocaleDateString("es-ES", options);
+            titleFormat: {
+                year: 'numeric',
+                month: 'long'
+            },
+            dayHeaderFormat: {
+                weekday: 'long'
             }
         },
         listMonth: {
@@ -810,7 +873,7 @@ let calendar = new Calendar(calendario, {
     },
     eventClassNames: 'eventoCal',
     eventClick: function (eventInfo) {
-        imprimirModalInterCalendario(eventInfo.event.id);
+        imprimirModalInterCalendario(eventInfo);
         modalAdd.show();
     },
     dateClick: function (date) {
@@ -822,8 +885,8 @@ let calendar = new Calendar(calendario, {
                 contadorEventos++;
             }
         });
-        imprimirModalAddCalendario(fechaCalClickada, contadorEventos);
-        modalAdd.show();
+        let text = `<i class="fas fa-plus"></i>Añadir`;
+        imprimirModalAddCalendario(fechaCalClickada, contadorEventos, text);
     },
     defaultTimedEventDuration: '3:00',
     dayHeaderFormat: {
@@ -835,15 +898,18 @@ let calendar = new Calendar(calendario, {
 function renderizarCal() {
     calendar.addEventSource(arrayCalendario);
     calendar.render();
-    let imageM = document.createElement("img");
-    imageM.src = "./pictogramas/month.png";
-    document.querySelector(".fc-dayGridMonth-button").prepend(imageM);
-    let imageA = document.createElement("img");
-    imageA.src = "./pictogramas/agenda.png";
-    document.querySelector(".fc-listMonth-button").prepend(imageA);
-    let imageW = document.createElement("img");
-    imageW.src = "./pictogramas/week.png";
-    document.querySelector(".fc-timeGridWeek-button").prepend(imageW);
+    if (iconsRendered === false) {
+        let imageM = document.createElement("img");
+        imageM.src = "./pictogramas/month.png";
+        document.querySelector(".fc-dayGridMonth-button").prepend(imageM);
+        let imageA = document.createElement("img");
+        imageA.src = "./pictogramas/agenda.png";
+        document.querySelector(".fc-listMonth-button").prepend(imageA);
+        let imageW = document.createElement("img");
+        imageW.src = "./pictogramas/week.png";
+        document.querySelector(".fc-timeGridWeek-button").prepend(imageW);
+        iconsRendered = true;
+    }
 }
 
 function generarUID() {
@@ -947,7 +1013,7 @@ function showHidePictos() {
 /**Camara */
 function showCamera() {
     contenidoModalAdd.innerHTML = '';
-    tituloModalAdd.innerHTML = '<i class="fa-solid fa-camera"></i>Cambiar foto';
+    tituloModalAdd.innerHTML = '<img src="./pictogramas/foto.png">Cambiar foto';
     let div = document.createElement('div');
     div.classList.add("row", "row-cols-2", "mb-2", "justify-content-around");
     div.innerHTML = `
