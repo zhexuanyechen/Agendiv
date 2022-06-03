@@ -19,6 +19,8 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
+    setPersistence,
+    browserLocalPersistence
 } from "firebase/auth";
 
 import {
@@ -148,6 +150,7 @@ function getAjustesArrayHoras() {
 
 onAuthStateChanged(auth, (usuario) => {
     if (usuario) {
+        console.log("Conectado.");
         document.body.style.visibility = 'visible';
         userId = usuario.uid;
         alumnoRef = doc(db, "alumnos", userId);
@@ -267,11 +270,15 @@ function imprimirLoginForm() {
     });
 }
 
-function login() {
+async function login() {
     let usuario = document.getElementById("usuario").value + '@gmail.com';
     let pwd = document.getElementById("pwd").value;
     let errorMessage = document.querySelector(".errorMessage");
-
+    try {
+        await setPersistence(auth, browserLocalPersistence);
+    } catch (e) {
+        console.log(e);
+    }
     signInWithEmailAndPassword(auth, usuario, pwd)
         .then(cred => {
             userId = cred.user.uid;
@@ -283,7 +290,7 @@ function login() {
         })
 }
 
-function signup() {
+async function signup() {
     let numHoras = getAjustesNumHoras();
     let usuario = document.getElementById("usuario").value + '@gmail.com';
     let pwd = document.getElementById("pwd").value;
@@ -291,6 +298,11 @@ function signup() {
     let nombreUser = document.getElementById("nombre").value;
     let apellidosUser = document.getElementById("apellidos").value;
     let arrayVacío = Array(numHoras).fill("+");
+    try {
+        await setPersistence(auth, browserLocalPersistence);
+    } catch (e) {
+        console.log(e);
+    }
     createUserWithEmailAndPassword(auth, usuario, pwd)
         .then(cred => {
             userId = cred.user.uid;
@@ -561,12 +573,11 @@ function imprimirModalAdd(btnText, addBtnFun, carga) {
 
 function scroll(form, btnUp, btnDown) {
     form.addEventListener('scroll', function () {
-        console.log(addForm.scrollTop);
         if (Math.floor(addForm.scrollTop) === 0)
             btnUp.disabled = true;
         else
             btnUp.disabled = false;
-        if (Math.abs(form.scrollHeight - form.clientHeight - form.scrollTop) < 1) {
+        if (Math.abs(form.scrollHeight - form.clientHeight - form.scrollTop) <= 1) {
             btnDown.disabled = true;
         } else {
             btnDown.disabled = false;
@@ -600,7 +611,7 @@ function cargarAsignaturasModal() {
     let html = "";
     for (let i = 0; i < arrayPictosHorario.length; i++) {
         if (arrayPictosHorario[i].id !== 'kYDPxKOtuPep514BsL8x')
-            html += `<div class="col-5">
+            html += `<div class="col-6 mb-2">
                   <div class="dibujoInput"><input type="radio" name="opcionHorario" id="${arrayPictosHorario[i].id}" value="${arrayPictosHorario[i].nombre}">
                     <label for="${arrayPictosHorario[i].id}" class="imgLabel"><img src="${arrayPictosHorario[i].foto}"class="rounded dibujo-cc"></label>
                   </div>
@@ -612,7 +623,7 @@ function cargarAsignaturasModal() {
 function cargarEventosModal() {
     let html = "";
     for (let i = 0; i < arrayPictosCalendario.length; i++) {
-        html += `<div class="col-5">
+        html += `<div class="col-6 mb-2">
                   <div class="dibujoInput"><input type="radio" name="opcionCalendario" id="${arrayPictosCalendario[i].id}" value="${arrayPictosCalendario[i].nombre}">
                     <label for="${arrayPictosCalendario[i].id}" class="imgLabel"><img src="${arrayPictosCalendario[i].foto}"class="rounded dibujo-cc"></label>
                   </div>
@@ -862,6 +873,7 @@ let calendar = new Calendar(calendario, {
     moreLinkContent: function (arg) {
         arg.text = "+" + arg.num;
     },
+    moreLinkClick: 'day',
     eventContent: function (arg) {
         let innerhtml = "";
         if (arg.event.extendedProps.image_url) {

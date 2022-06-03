@@ -72,7 +72,7 @@ i {
 /*Botones aceptar-rechazar*/
 .btnVerde,
 .btnRojo {
-    border-radius: 4px;
+    border-radius: 5px;
     font-weight: bold;
     box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.30);
     font-size: 1.2em;
@@ -387,6 +387,11 @@ form>.modal-footer {
     font-size: 0.95em;
 }
 
+#btnsemanaH,
+#btndiaH {
+    height: 100%;
+}
+
 /*Modal Asignaturas/Eventos*/
 
 .dibujo-cc {
@@ -671,6 +676,38 @@ a.fc-timegrid-event {
     width: 65%;
 }
 
+.fc .fc-daygrid-event {
+    margin: 0.1em;
+}
+
+.fc .fc-dayGridDay-view {
+    width: 75%;
+    margin: auto;
+}
+
+.fc .fc-dayGridDay-view .fc-daygrid-day-frame {
+    min-height: 400px;
+}
+
+.fc .fc-dayGridDay-view .fc-daygrid-event {
+    margin: 0.3em;
+}
+
+.fc .fc-dayGridDay-view .fc-col-header-cell {
+    height: 50px;
+    font-size: 1.5em;
+}
+
+.fc .fc-dayGridDay-view .fc-daygrid-event {
+    width: 80%;
+    margin: 0.3em auto;
+}
+
+.fc .fc-scrollgrid td,
+.fc .fc-scrollgrid th {
+    overflow: hidden;
+}
+
 /*Ajustes*/
 .ajustesTitle {
     border-bottom: 1px solid black;
@@ -728,6 +765,11 @@ a.fc-timegrid-event {
         font-size: 1rem;
     }
 
+    .btnVerde,
+    .btnRojo {
+        font-size: 1em;
+    }
+
     .fc .fc-button-group {
         flex-direction: column;
         justify-content: center;
@@ -753,7 +795,16 @@ a.fc-timegrid-event {
     }
 
     .fc .fc-col-header-cell-cushion {
-        font-size: 0.8em;
+        font-size: 0.75em;
+    }
+
+    .scrollBtnDown,
+    .scrollBtnUp {
+        width: 80%
+    }
+
+    .fc .fc-dayGridDay-view {
+        width: 85%;
     }
 }
 
@@ -773,20 +824,30 @@ a.fc-timegrid-event {
     body {
         font-size: 1.1rem;
     }
-
-    .fc .fc-col-header-cell-cushion {
-        font-size: 0.9em;
-    }
-
-    .fc .fc-button-group>.fc-button {
-        padding: 0.1em;
-        font-size: 0.85em;
-    }
 }
 
-@media (min-width: 825px) and (max-width:975px) {
+@media (min-width:600px) and (max-width:975px) {
     .fc .fc-button-group>.fc-button {
         padding: 0.1em;
         font-size: 0.85em;
+    }
+
+    .fc .fc-button-group>.fc-button>img {
+        display: block;
+        margin: auto;
+    }
+
+    .fc .fc-col-header-cell-cushion {
+        font-size: 0.85em;
+    }
+
+    .scrollBtnDown,
+    .scrollBtnUp {
+        width: 65%;
+    }
+
+    .btnVerde,
+    .btnRojo {
+        font-size: 1.1em;
     }
 }
