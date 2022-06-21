@@ -11,6 +11,7 @@ import {
     updateDoc,
     deleteDoc,
     addDoc,
+    setDoc,
     orderBy
 } from 'firebase/firestore'
 
@@ -19,6 +20,7 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     signOut,
+    createUserWithEmailAndPassword
 } from "firebase/auth";
 
 import Modal from 'bootstrap/js/dist/modal';
@@ -79,7 +81,7 @@ const listaPictosHor = document.getElementById("listaPictosHor");
 const listaPictosCal = document.getElementById("listaPictosCal");
 const listaAlumnos = document.getElementById("listaAlumnos");
 
-let unsubscribe, ajustesListener;
+let unsubscribe, ajustesListener, userId, profesoresRef;
 
 let pictosCListener, pictosHListener, ajustes;
 let arrayPictosHorario = [];
@@ -164,7 +166,6 @@ onAuthStateChanged(auth, (usuario) => {
     } else {
         imprimirLoginForm();
         modalAuth.show();
-        console.log("no logueado");
     }
 });
 
@@ -180,7 +181,7 @@ function login() {
             modalAuth.hide();
         }).catch(err => {
             console.log(err.message);
-            errorMessage.innerText = catchMensajeError(error.code);
+            errorMessage.innerText = catchMensajeError(err.code);
         })
 }
 
@@ -192,18 +193,80 @@ function imprimirLoginForm() {
         </div>
         <div class="mb-2 form-group">
             <label for="pwd" class="form-label"><i class="fa-solid fa-lock"></i>Contraseña</label>
-            <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
+            <input type="password" class="form-control" placeholder="Contraseña" id="pwd" required>
         </div>
         <div class="modal-footer">
-            <button type="button" id="login" class="botonA btnVerde"><i class="fa-solid fa-right-to-bracket"></i>Inicio sesión</button>
+            <p id="enlaceaSignup" class="col-10 col-md-6" tabindex="0">¿No tienes cuenta?<br> Registrate aquí.</p>
+            <button type="button" id="login" class="botonA btnVerde"><i class="fa-solid fa-right-to-bracket"></i>Iniciar sesión</button>
         </div>
         <p class="errorMessage text-center"></p>`;
     tituloModalAuth.innerText = "Iniciar Sesión";
     document.getElementById("login").addEventListener("click", login);
-    let inputLogin = document.querySelectorAll("#loginForm input");
+    document.getElementById("enlaceaSignup").addEventListener("click", imprimirSignupForm);
+    let inputLogin = document.querySelectorAll("#authForm input");
     inputLogin.forEach(function (input) {
         input.addEventListener("keyup", () => {
-            validacionFormulario(document.getElementById("login"), inputLogin);
+            validacionFormulario(inputLogin.length, document.getElementById("login"), inputLogin);
+        });
+    });
+}
+
+async function signup() {
+    let usuario = document.getElementById("email").value;
+    let pwd = document.getElementById("pwd").value;
+    let errorMessage = document.querySelector(".errorMessage");
+    let nombreUser = document.getElementById("nombre").value;
+    let apellidosUser = document.getElementById("apellidos").value;
+
+    createUserWithEmailAndPassword(auth, usuario, pwd)
+        .then(cred => {
+            userId = cred.user.uid;
+            authForm.reset();
+            modalAuth.hide();
+            setDoc(doc(db, 'profesores', userId), {
+                nombre: nombreUser,
+                apellidos: apellidosUser,
+            }).then(() => {
+                console.log('profesor created:', userId);
+            });
+        }).catch(err => {
+            console.log(err.message);
+            errorMessage.innerText = catchMensajeError(err.code);
+        });
+}
+
+function imprimirSignupForm() {
+    authForm.innerHTML = `
+        <div class="mb-2 form-group row gx-3">
+            <div class="col-6">
+              <label for="nombre" class="form-label"><i class="fa-solid fa-id-card"></i>Nombre</label>
+              <input type="text" class="form-control" placeholder="Nombre" id="nombre" required>
+            </div>
+            <div class="col-6">
+              <label for="apellidos" class="form-label"><i class="fa-solid fa-id-card"></i>Apellidos</label>
+              <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" required>
+            </div>
+        </div>
+        <div class="mb-2 form-group">
+            <label for="email" class="form-label"><i class="fa-solid fa-at"></i>Correo electrónico</label>
+            <input type="text" class="form-control" placeholder="Usuario" id="email" required>
+        </div>
+        <div class="mb-2 form-group">
+            <label for="pwd" class="form-label"><i class="fa-solid fa-lock"></i>Contraseña</label>
+            <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
+        </div>
+        <div class="modal-footer row align-items-stretch justify-content-around">
+            <button type="button" id="cancelarSignup" class="botonA btnRojo col-md-5"><i class="fa-solid fa-xmark"></i>Cancelar</button>
+            <button type="button" id="signup" class="botonA btnVerde col-md-5" disabled><i class="fa-solid fa-right-to-bracket"></i>Registrarse</button>
+        </div>
+        <p class="errorMessage text-center"></p>`;
+    tituloModalAuth.innerHTML = `Registrarse`;
+    document.getElementById("cancelarSignup").addEventListener("click", imprimirLoginForm);
+    document.getElementById("signup").addEventListener("click", signup);
+    let inputSignup = document.querySelectorAll("#authForm input");
+    inputSignup.forEach(function (input) {
+        input.addEventListener("keyup", () => {
+            validacionFormulario(inputSignup.length, document.getElementById("signup"), inputSignup);
         });
     });
 }
@@ -220,22 +283,25 @@ function catchMensajeError(error) {
         mensaje = "La contraseña debe tener mínimo 6 caracteres.";
     } else if (error === 'auth/email-already-exists') {
         mensaje = "Ya existe una cuenta con este correo.";
+    } else if (error === 'auth/email-already-in-use') {
+        mensaje = "Ya existe una cuenta con este correo.";
     } else {
         mensaje = "Error inesperado.";
     }
     return mensaje;
 }
 
-function validacionFormulario(btn, arrayInput) {
+function validacionFormulario(length, btn, arrayInput) {
     let completado = 0;
     arrayInput.forEach(function (input) {
         if (input.value.trim() === "") {
             btn.disabled = true;
+            completado--;
         } else {
             completado++;
         }
     });
-    if (completado === 2) {
+    if (completado === length) {
         btn.disabled = false;
     }
 }
@@ -338,7 +404,7 @@ try {
         ajustes = doc.data();
     });
 
-    let queryH = query(collection(db, "pictosHorario"));
+    let queryH = query(collection(db, "pictosHorario"), orderBy("nombre"));
     pictosHListener = onSnapshot(queryH, (pictosHorarioSnapshot) => {
         arrayPictosHorario = [];
         pictosHorarioSnapshot.forEach((doc) => {
@@ -349,7 +415,7 @@ try {
         imprimirListaPictosHor();
     });
 
-    let queryC = query(collection(db, "pictosCalendario"));
+    let queryC = query(collection(db, "pictosCalendario"), orderBy("nombre"));
     pictosCListener = onSnapshot(queryC, (pictosCalendarioSnapshot) => {
         arrayPictosCalendario = [];
         pictosCalendarioSnapshot.forEach((doc) => {
@@ -368,15 +434,16 @@ try {
 function readEventos(arrayPictos) {
     let html = "";
     arrayPictos.forEach((picto) => {
-        html += `<div id="${picto.id}" class="actividad mb-3 row">
-                <div class="col-sm-6 col-md-7 col-lg-8">
-                    <p class="nombrePicto"><strong>Nombre: </strong>${picto.nombre}</p>
-                    <div class="pictoList"><img src="${picto.foto}"></div>
-                </div>
-                <div class="col-sm-6 col-md-5 col-lg-4 d-flex flex-column justify-content-around">
-                    <button type="button" class="btn btnRojo btnBorrarAct"><i class="fas fa-trash-alt"></i>Eliminar</button>
-                </div>
-            </div>`;
+        if (picto.nombre !== "+")
+            html += `<div id="${picto.id}" class="actividad mb-3 row">
+                    <div class="col-sm-6 col-md-7 col-lg-8">
+                        <p class="nombrePicto"><strong>Nombre: </strong>${picto.nombre}</p>
+                        <div class="pictoList"><img src="${picto.foto}"></div>
+                    </div>
+                    <div class="col-sm-6 col-md-5 col-lg-4 d-flex flex-column justify-content-around">
+                        <button type="button" class="btn btnRojo btnBorrarAct"><i class="fas fa-trash-alt"></i>Eliminar</button>
+                    </div>
+                </div>`;
     });
     return html;
 }
@@ -386,6 +453,7 @@ function imprimirListaPictos(title, array, lista) {
     listTitle.classList.add('text-center');
     listTitle.innerText = title;
     let div = document.createElement('div');
+    div.classList.add("row", "row-cols-2", "justify-content-around");
     div.innerHTML = readEventos(array);
     lista.innerHTML = "";
     lista.append(listTitle, div);
@@ -395,14 +463,13 @@ function imprimirListaPictos(title, array, lista) {
             let tipo = this.parentNode.parentNode.parentNode.parentNode.id;
             let actividadId = this.parentNode.parentNode.id;
             let title = 'Eliminar Pictograma';
-            let text = 'Eliminar un pictograma es una acción permanente. Puedes estar eliminando un pictograma usado por los alumnos y generar conflictos. ¿Estás seguro de querer proseguir?'
+            let text = 'Este pictograma puede estar usándose por alumnos. ¿Estás seguro de querer eliminarlo?'
             showConfirmarEliminar(title, text, () => {
                 borrarActividad(actividadId, tipo)
             });
             modalEditar.show();
         });
     });
-    document.querySelector('#kYDPxKOtuPep514BsL8x .btnBorrarAct').style.display = 'none';
 }
 
 function imprimirListaPictosCal() {
@@ -427,7 +494,7 @@ async function borrarActividad(actividadId, tipo) {
             await deleteDoc(doc(db, 'pictosCalendario', actividadId));
             arrayPictosHorario.splice(deleteIndex, 1);
         }
-        let text = "Se ha borrado al pictograma con id" + actividadId;
+        let text = "Se ha borrado al pictograma correctamente.";
         showConfirmacion(title, text);
     } catch (e) {
         console.log(e);
@@ -480,7 +547,7 @@ async function borrarAlumno(idAlumno) {
     let title = 'Eliminar alumno';
     try {
         await deleteDoc(doc(db, "alumnos", idAlumno));
-        let text = "Se ha borrado al alumno con id" + idAlumno;
+        let text = "Se ha borrado al alumno permanentemente";
         showConfirmacion(title, text);
     } catch (e) {
         console.log(e);
@@ -696,7 +763,7 @@ function showConfirmarEliminar(title, text, deleteFun) {
 
 function confirmarUpdatePicto(imageName) {
     let title = 'Añadir Pictograma';
-    let text = 'Se ha subido el pictograma ' + imageName + ' a la base de datos.';
+    let text = 'Se ha subido el pictograma correctamente.';
     showConfirmacion(title, text);
     modalEditar.show();
 }

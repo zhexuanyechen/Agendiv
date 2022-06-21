@@ -145,6 +145,19 @@ form>.modal-footer {
     width: 90%;
 }
 
+#enlaceaSignup {
+    cursor: pointer;
+    text-align: right;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 0.9em;
+    padding: 0 0.65em;
+}
+
+#enlaceaSignup:hover {
+    color: #01468a;
+}
+
 /*Botones aceptar-rechazar*/
 .btnVerde,
 .btnRojo {
@@ -220,13 +233,22 @@ form>.modal-footer {
 
 .actividad,
 .alumno {
-    width: 100%;
     border: 2px solid var(--colorOscuro);
     border-radius: 5px;
     padding: 0.2em;
     background-color: var(--fondoSec);
     box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4);
+
+}
+
+.alumno {
+    width: 100%;
     margin: 0.3em 0 0.3em 0;
+}
+
+.actividad {
+    width: 45%;
+    margin: 0.3em 0.1em;
 }
 
 .actividad p,

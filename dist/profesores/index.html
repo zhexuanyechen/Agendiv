@@ -37,8 +37,8 @@
             </div>
         </div>
     </div>
-    <div id="container" class="container-lg contenedor mt-4">
-        <div class="cabecera">
+    <div id="container" class="container-lg contenedor">
+        <div class="cabecera mt-4">
             <button type="button" class="btnVolver"><img src="./pictogramas/back.png"></button>
             <h1 class="firstTitle"><i class="fas fa-school"></i>Profesores</h1>
             <button type="button" id="logout" class="botonA btnRojo"><i class="fas fa-sign-out-alt"></i>Cerrar
@@ -55,7 +55,7 @@
                 <div class="p-4 col">
                     <button type="button" id="btnImagenes" class="btn btnIndex">
                         <img class="imgBtnIndex" src="./pictogramas/pictograms.png">
-                        <p>Gestión Actividades</p>
+                        <p>Gestión Pictogramas</p>
                     </button>
                 </div>
             </div>
@@ -86,23 +86,21 @@
             <form id="uploadImgForm">
                 <h3>Subir nuevo pictograma</h3>
                 <p class="aviso">Es importante no subir un pictograma repetido.</p>
-                <div class="input-group mb-3">
-                    <label for="formFile" class="input-group-text">Subir nuevo pictograma</label>
+                <div class="mb-3">
                     <input id="inputImage" class="form-control" type="file" accept="image/*" required>
                 </div>
-                <div class="mb-3 d-flex justify-content-end">
-                    <button id="uploadCalendario" type="button" class="btn btnVerde me-2"><i
-                            class="fa-solid fa-calendar-days"></i>Subir imagen para
-                        Calendario</button>
+                <div class="mb-3 d-flex justify-content-around">
                     <button id="uploadHorario" type="button" class="btn btnVerde"><i
                             class="fa-solid fa-table-columns"></i>Subir imagen para Horario</button>
+                    <button id="uploadCalendario" type="button" class="btn btnVerde"><i
+                            class="fa-solid fa-calendar-days"></i>Subir imagen para Calendario</button>
                 </div>
             </form>
             <div id="listaPictosHor" class="lista"></div>
             <div id="listaPictosCal" class="lista"></div>
         </div>
         <div id="alumnosContainer">
-            <h2><i class="fa-solid fa-graduation-cap"></i>Gestión de Alumnos</h2>
+            <h2><i class="fa-solid fa-graduation-cap"></i>Gestión de Estudiantes</h2>
             <button type="button" id="btnEditHoras" class="btn btnVerde btnHoras"><i
                     class="fa-solid fa-clock"></i>Editar horas
                 horario</button>
