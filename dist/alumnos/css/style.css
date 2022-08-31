@@ -782,6 +782,26 @@ a.fc-timegrid-event {
     box-shadow: 2px 2px 2px #ef686899;
 }
 
+.spinner {
+    border: 6px solid rgba(0, 0, 0, 0.1);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border-left-color: #09f;
+    margin: auto;
+    animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 /*Media queries*/
 @media (max-width:600px) {
     .cabeceraH span {

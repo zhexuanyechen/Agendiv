@@ -1148,6 +1148,13 @@ function showCamera() {
     modalAdd.show();
 }
 
+function showCarga() {
+    contenidoModalAdd.innerHTML = '';
+    let div = document.createElement('div');
+    div.classList.add("spinner");
+    contenidoModalAdd.append(div)
+}
+
 function elegirFoto() {
     let inputFoto = document.getElementById("elegirFoto")
     inputFoto.click();
@@ -1162,6 +1169,7 @@ async function subirFoto() {
     let foto = this.files[0];
     let fotoName = foto.name;
     const fotoRef = ref(storage, '/fotosAlumnos/' + fotoName);
+    showCarga();
     uploadImage(fotoRef, foto).then((imgUrl) => {
         updateDoc(alumnoRef, {
             foto: imgUrl
