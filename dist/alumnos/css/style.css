@@ -115,13 +115,19 @@ i {
 /*Cabecera+ajustes*/
 .ajustesBtn,
 .btnVolver,
+.btnClose,
 .dropdownFoto {
     border: none;
     background-color: var(--fondoApp);
     padding: 0;
 }
 
-.btnVolver>img {
+.btnClose {
+    display: block;
+}
+
+.btnVolver>img,
+.btnClose>img {
     display: block;
     margin: auto;
     width: 74px;
@@ -176,7 +182,9 @@ i {
 .ajustesBtn:hover>img,
 .btnVolver:hover>img,
 .ajustesBtn:focus>img,
-.btnVolver:focus>img {
+.btnVolver:focus>img,
+.btnClose:hover>img,
+.btnClose:focus>img {
     filter: drop-shadow(10px 10px 4px rgba(0, 0, 0, 0.5));
 }
 
@@ -394,7 +402,7 @@ form>.modal-footer {
 #tablaHorarioDia .dibujoHorario,
 #tablaHorarioDia .addHorario {
     min-width: 0;
-    max-width: 50%;
+    max-width: 45%;
 }
 
 .tablaHorario th.miercoles {
@@ -835,7 +843,8 @@ a.fc-timegrid-event {
     }
 
     #logout>img,
-    .volver>img {
+    .volver>img,
+    .close>img {
         width: 35px;
     }
 
@@ -856,7 +865,7 @@ a.fc-timegrid-event {
 
 @media (min-width:600px) and (max-width:825px) {
     #tablaHorarioDia {
-        width: 85%;
+        width: 80%;
     }
 
     #tablaHorarioSemana .celdaH {
@@ -872,7 +881,8 @@ a.fc-timegrid-event {
     }
 
     #logout>img,
-    .volver>img {
+    .volver>img,
+    .close>img {
         width: 45px;
     }
 
@@ -888,6 +898,10 @@ a.fc-timegrid-event {
 }
 
 @media (min-width:600px) and (max-width:975px) {
+    #tablaHorarioDia {
+        width: 80%;
+    }
+
     .fc .fc-button-group>.fc-button {
         padding: 0.1em;
         font-size: 0.85em;
@@ -921,5 +935,11 @@ a.fc-timegrid-event {
 @media (min-width:825px) and (max-width:950px) {
     #tablaHorarioSemana .dibujoHorario {
         width: 90%;
+    }
+}
+
+@media (max-height:550px) {
+    .modal-body {
+        max-height: none;
     }
 }

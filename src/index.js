@@ -78,6 +78,7 @@ const calendarContainer = document.getElementById("calendarContainer");
 
 /*Botones*/
 const btnsVolver = document.querySelectorAll(".btnVolver");
+const btnsClose = document.querySelectorAll(".close");
 const btnHorario = document.getElementById("btnHorario");
 const btnCalendario = document.getElementById("btnCalendario");
 const btnDiaH = document.getElementById("btndiaH");
@@ -157,6 +158,8 @@ onAuthStateChanged(auth, (usuario) => {
                 alumData = doc.data();
                 arrayCalendario = getArrayCalendario(alumData.calendario);
                 getHorario(alumData);
+                showHideHoras();
+                showHidePictos();
                 document.getElementById("userFoto").src = alumData.foto;
             }, (error) => {
                 console.log(error.message);
@@ -170,10 +173,37 @@ onAuthStateChanged(auth, (usuario) => {
 });
 
 /*Funcion botones */
+btnsVolver.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        horarioContainer.style.display = "none";
+        calendarContainer.style.display = "none";
+        btnContainer.style.display = "block";
+        btnsVolver.forEach((btn) => {
+            btn.style.display = "none";
+        });
+        btnsClose.forEach((btn) => {
+            btn.style.display = "block";
+        });
+    });
+    btn.style.display = "none";
+});
+
+btnsClose.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        window.close();
+    });
+});
+
 btnHorario.addEventListener("click", () => {
     horarioContainer.style.display = "block";
     btnContainer.style.display = "none";
     calendarContainer.style.display = "none";
+    btnsClose.forEach((btn) => {
+        btn.style.display = "none";
+    });
+    btnsVolver.forEach((btn) => {
+        btn.style.display = "block";
+    });
 });
 
 btnCalendario.addEventListener("click", () => {
@@ -181,6 +211,12 @@ btnCalendario.addEventListener("click", () => {
     btnContainer.style.display = "none";
     calendarContainer.style.display = "block";
     renderizarCal();
+    btnsClose.forEach((btn) => {
+        btn.style.display = "none";
+    });
+    btnsVolver.forEach((btn) => {
+        btn.style.display = "block";
+    })
 });
 
 btnAjustes.addEventListener('click', () => {
@@ -197,14 +233,6 @@ logoutButton.addEventListener('click', () => {
         .catch(err => {
             console.log(err.message)
         })
-});
-
-btnsVolver.forEach((btn) => {
-    btn.addEventListener("click", () => {
-        horarioContainer.style.display = "none";
-        calendarContainer.style.display = "none";
-        btnContainer.style.display = "block";
-    });
 });
 
 btnDiaH.addEventListener("click", () => {
@@ -247,8 +275,8 @@ function imprimirLoginForm() {
             <input type="text" class="form-control" placeholder="Usuario" id="usuario" required>
         </div>
         <div class="mb-2 form-group">
-            <label for="pwd" class="form-label"><img src="./pictogramas/contraseña.png">Contraseña</label>
-            <input type="text" class="form-control" placeholder="Contrasena" id="pwd" required>
+            <label for="pwd" class="form-label"><img src="./pictogramas/contrasena.png">Contraseña</label>
+            <input type="text" class="form-control" placeholder="Contrasena" id="pwd" autocapitalize="none" required>
         </div>
         <div class="modal-footer row align-items-start justify-content-around">
             <p id="enlaceaSignup" class="col-10 col-md-6" tabindex="0">¿No tienes cuenta?<br>Registrate aquí</p>
@@ -339,7 +367,7 @@ function imprimirSignupForm() {
             </div>
             <div class="col-6">
               <label for="apellidos" class="form-label"><img src="./pictogramas/last_name.png">Apellidos</label>
-              <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" required>
+              <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" autocapitalize="none" required>
             </div>
         </div>
         <div class="mb-2 form-group">
@@ -353,7 +381,6 @@ function imprimirSignupForm() {
             <label for="pwd" class="form-label"><img src="./pictogramas/contrasena.png">Contraseña</label>
             <input type="text" class="form-control" placeholder="Contraseña" id="pwd" required>
         </div>
-        <input type='submit' hidden>
         <div class="modal-footer row align-items-stretch justify-content-around">
             <button type="button" id="cancelarSignup" class="botonA btnRojo col-md-5"><i class="fa-solid fa-xmark"></i>Cancelar</button>
             <button type="submit" id="signup" class="botonA btnVerde col-md-5" disabled><i class="fa-solid fa-right-to-bracket"></i>Registrarse</button>
@@ -364,8 +391,10 @@ function imprimirSignupForm() {
         e.preventDefault();
         imprimirLoginForm();
     });
-    document.getElementById("signup").addEventListener("click", signup);
-    authForm.addEventListener
+    document.getElementById("signup").addEventListener("click", (e) => {
+        e.preventDefault();
+        signup();
+    });
     let inputSignup = document.querySelectorAll("#authForm input");
     inputSignup.forEach(function (input) {
         input.addEventListener("keyup", () => {

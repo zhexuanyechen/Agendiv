@@ -549,6 +549,7 @@ async function borrarAlumno(idAlumno) {
         await deleteDoc(doc(db, "alumnos", idAlumno));
         let text = "Se ha borrado al alumno permanentemente";
         showConfirmacion(title, text);
+        document.getElementById(idAlumno).style.display = "none";
     } catch (e) {
         console.log(e);
         let text = "Se ha producido un error:" + e;
